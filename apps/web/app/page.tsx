@@ -1,6 +1,8 @@
+"use client";
 import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
+
 import styles from "./page.module.css";
+import { Button } from "@heroui/react";
 
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
@@ -22,6 +24,9 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
+        <Button>HeroUi</Button>
+        <button className="btn btn-error">Daisy</button>
+
         <ThemeImage
           className={styles.logo}
           srcLight="turborepo-dark.svg"
@@ -63,9 +68,7 @@ export default function Home() {
             Read our docs
           </a>
         </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
+        <Button className={styles.secondary}>Open alert</Button>
       </main>
       <footer className={styles.footer}>
         <a
