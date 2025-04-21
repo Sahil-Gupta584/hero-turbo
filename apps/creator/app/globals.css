@@ -1,0 +1,60 @@
+/* @import "tailwindcss"; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --font-cal: "CalSans", sans-serif;
+  --base-secondary: #59545196;
+}
+
+body {
+  font-family: var(--font-cal);
+  font-weight: 400;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+@media (min-width: 600px) {
+  .video-cards-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (min-width: 680px) {
+  .video-cards-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  div[role="alertdialog"] {
+    width: fit-content;
+  }
+  div[role="alert"] div div {
+    font-size: 21px;
+  }
+}
+.import-video-modal div[role="presentation"] {
+  @apply flex flex-wrap gap-6 flex-row;
+}
+@media (min-width: 850px) {
+  .video-cards-container {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+@layer base {
+  button {
+    @apply transition-transform duration-150 active:translate-y-1;
+  }
+}

@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CREATOR
+  EDITOR
+}
+
+enum PlanType {
+  FREE
+  PRO
+  BUSINESS
+}
+
+enum VideoStatus {
+  DRAFT
+  PENDING
+  SCHEDULED
+  UPLOADING
+}
+
+enum PrivacyStatus {
+  Private
+  Public
+  Unlisted
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  name           String
+  image          String
+  emailVerified  DateTime?
+  role           Role
+  plan           PlanType?
+  Authenticator  Authenticator[]
+  ownedVideos    Video[]         @relation("VideoOwner")
+  importedVideos Video[]         @relation("VideoImporter")
+
+  channels         Channel[]
+  editors          CreatorEditor[] @relation("UserCreators")
+  creators         CreatorEditor[] @relation("UserEditors")
+  sentInvites      Invite[]        @relation("InviteCreators")
+  receivedInvites  Invite[]        @relation("InviteEditors")
+  accessibleVideos VideoEditor[] // New field: videos this user can access as an editor
+
+  account  Account[]
+  sessions Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Join table to establish many-to-many relationship between creators and editors
+model CreatorEditor {
+  creatorId String
+  editorId  String
+  creator   User   @relation("UserCreators", fields: [creatorId], references: [id], onDelete: Cascade)
+  editor    User   @relation("UserEditors", fields: [editorId], references: [id], onDelete: Cascade)
+
+  assignedAt DateTime @default(now())
+
+  @@id([creatorId, editorId])
+}
+
+model Video {
+  id            String        @id @default(uuid())
+  gDriveId      String
+  title         String?
+  description   String?
+  thumbnailUrl  String?
+  scheduledAt   Int?
+  videoStatus   VideoStatus   @default(DRAFT)
+  privacyStatus PrivacyStatus @default(Private)
+  playlistIds   String[]
+  tags          String
+  categoryId    String
+  ownerId       String
+  owner         User          @relation("VideoOwner", fields: [ownerId], references: [id])
+  importedById  String
+  importedBy    User          @relation("VideoImporter", fields: [importedById], references: [id])
+  editors       VideoEditor[] // New field: list of editors for the video
+  channelId     String?
+  channel       Channel?      @relation(fields: [channelId], references: [id])
+  createdAt     String
+}
+
+model Channel {
+  id            String  @id @default(uuid())
+  userId        String
+  name          String
+  ytChannelId   String  @unique
+  logoUrl       String
+  description   String
+  refresh_token String
+  access_token  String
+  video         Video[] @relation(fields: [])
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VideoEditor {
+  videoId  String
+  editorId String
+
+  video  Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  editor User  @relation(fields: [editorId], references: [id], onDelete: Cascade)
+
+  assignedAt DateTime @default(now())
+
+  @@id([videoId, editorId])
+}
+
+model Invite {
+  id          String       @id @unique @default(uuid())
+  creatorId   String
+  editorId    String?
+  editorEmail String
+  creator     User         @relation("InviteCreators", fields: [creatorId], references: [id], onDelete: Cascade)
+  editor      User?        @relation("InviteEditors", fields: [editorId], references: [id], onDelete: Cascade)
+  status      InviteStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  expiresAt   String
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  refresh_token String?
+  access_token  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
