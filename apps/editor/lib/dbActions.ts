@@ -72,6 +72,7 @@ export async function getEditorVideos(editorId: string) {
         accessibleVideos: {
           include: { video: { include: { channel: true, importedBy: true } } },
         },
+        creators: { include: { creator: true } },
       },
     });
     if (!isExists) throw new Error("Creator not found");
@@ -88,7 +89,7 @@ export async function getEditorCreators(editorId: string) {
         id: editorId,
       },
       include: {
-        creators:true
+        creators: { include: { creator: true } },
       },
     });
     if (!isExists) throw new Error("Creator not found");

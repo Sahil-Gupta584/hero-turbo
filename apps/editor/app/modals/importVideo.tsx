@@ -3,14 +3,13 @@ import {
   addToast,
   Avatar,
   Button,
-  Checkbox,
-  CheckboxGroup,
-  Divider,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
   Tooltip,
   useDisclosure,
 } from "@heroui/react";
@@ -20,8 +19,7 @@ import { TUserDetails } from "../page";
 
 type TImportVideo = {
   videoFile: FileList;
-  channelId?: string;
-  editorsId?: string[];
+  creatorId: string;
 };
 
 export default function ImportVideo({
@@ -39,9 +37,6 @@ export default function ImportVideo({
   } = useForm<TImportVideo>();
 
   const videoFile = watch("videoFile");
-  const selectedChannel = watch("channelId");
-  const selectedEditors = watch("editorsId");
-
   const onSubmit = async (data: TImportVideo) => {
     if (!userDetails) {
       addToast({ color: "danger", description: "Unauthenticated" });
@@ -54,15 +49,11 @@ export default function ImportVideo({
     formdata.append("importerId", userDetails.id as string);
     formdata.append("ownerId", userDetails.id as string);
 
-    // Only append if not undefined/null
-    if (data.channelId) {
-      formdata.append("channelId", data.channelId);
-    }
-    if (userDetails.channels.length === 1) {
-      formdata.append("channelId", userDetails.channels[0]?.id as string);
-    }
-    if (Array.isArray(data.editorsId) && data.editorsId.length > 0) {
-      formdata.append("editorsId", JSON.stringify(data.editorsId));
+    if (userDetails.creators.length === 1) {
+      formdata.append(
+        "creatorId",
+        userDetails.creators[0]?.creatorId as string
+      );
     }
 
     const res = await fetch("/api/video/import", {
@@ -123,61 +114,75 @@ export default function ImportVideo({
                   </p>
                 )}
 
-                {/* Channel Selection (Single) */}
-                {userDetails && userDetails.channels?.length > 1 && (
-                  <div className="space-y-2">
-                    <Divider className="bg-gray-400" />
-                    <p className=" font-medium">For :</p>
-                    <div className="gap-6 flex flex-wrap ">
-                      {userDetails &&
-                        userDetails.channels.map((channel) => (
-                          <label
-                            key={channel.id}
-                            className="flex items-center  cursor-pointer gap-1"
-                          >
-                            <input
-                              type="radio"
-                              value={channel.id}
-                              {...register("channelId")}
-                              checked={selectedChannel === channel.id}
-                              onChange={() => setValue("channelId", channel.id)}
-                            />
-                            <Avatar
-                              src={channel.logoUrl}
-                              fallback
-                              className="w-7 h-7 ml-3"
-                            />
-                            <span className="mt-1">{channel.name}</span>
-                          </label>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Editors Selection (Multiple) */}
-                {userDetails && userDetails.editors.length > 0 && (
-                  <div className="space-y-2">
-                    <Divider className="bg-gray-400" />
-                    <p className=" font-medium">Can be accessed by:</p>
-                    <CheckboxGroup
-                      value={selectedEditors}
-                      onValueChange={(val) => setValue("editorsId", val)}
-                    >
-                      {userDetails &&
-                        userDetails.editors.map(({ editor }) => (
-                          <Checkbox key={editor.id} value={editor.id}>
-                            <div className="flex items-center gap-3">
-                              <Avatar
-                                src={editor.image}
-                                className="w-7 h-7 ml-3"
-                              />
-                              <span className="mt-1">{editor.name}</span>
-                            </div>
-                          </Checkbox>
-                        ))}
-                    </CheckboxGroup>
-                  </div>
-                )}
+                <Select
+                  classNames={{
+                    label: "group-data-[filled=true]:-translate-y-5 top-[22px]",
+                    trigger: "min-h-16",
+                    listboxWrapper: "max-h-[400px]",
+                  }}
+                  items={userDetails?.creators}
+                  defaultSelectedKeys={userDetails?.creators?.length>1?[]:userDetails?.creators[0]?.creatorId}
+                  label="Select a Creator"
+                  listboxProps={{
+                    itemClasses: {
+                      base: [
+                        "rounded-md",
+                        "text-default-500",
+                        "transition-opacity",
+                        "data-[hover=true]:text-foreground",
+                        "data-[hover=true]:bg-default-100",
+                        "dark:data-[hover=true]:bg-default-50",
+                        "data-[selectable=true]:focus:bg-default-50",
+                        "data-[pressed=true]:opacity-70",
+                        "data-[focus-visible=true]:ring-default-500",
+                      ],
+                    },
+                  }}
+                  popoverProps={{
+                    classNames: {
+                      base: "before:bg-default-200",
+                      content: "p-0 border-small border-divider bg-background",
+                    },
+                  }}
+                  renderValue={(creators) => {
+                    return creators.map((creator) => (
+                      <div
+                        key={creator.key}
+                        className="flex items-center gap-2 "
+                      >
+                        <Avatar
+                          alt={creator.data?.creator.name}
+                          className="flex-shrink-0"
+                          size="sm"
+                          src={creator.data?.creator.image}
+                        />
+                        <div className="flex flex-col">
+                          <span>{creator.data?.creator.name}</span>
+                        </div>
+                      </div>
+                    ));
+                  }}
+                  variant="bordered"
+                >
+                  {({ creator }) => (
+                    <SelectItem key={creator.id} textValue={creator.name} >
+                      <div className="flex gap-2 items-center">
+                        <Avatar
+                          alt={creator.name}
+                          className="flex-shrink-0"
+                          size="sm"
+                          src={creator.image}
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-small">{creator.name}</span>
+                          <span className="text-tiny text-default-400">
+                            {creator.email}
+                          </span>
+                        </div>
+                      </div>
+                    </SelectItem>
+                  )}
+                </Select>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
