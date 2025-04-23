@@ -61,14 +61,11 @@ export default function DrawerComponent({ session }: { session: Session }) {
                 Joined Creators
               </DrawerHeader>
               <DrawerBody>
-                <div className="flex items-center justify-between px-5">
-                  <div></div>
                   {creators && creators.length === 0 && (
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 text-center">
                       No Creators joined yet
                     </p>
                   )}
-                </div>
                 <div className="flex gap-4 items-center flex-wrap p-4">
                   {creators &&
                     creators.map(({ creator }, i) => (

@@ -64,6 +64,7 @@ export default function Home() {
                   videoId={video.id}
                   userRole={data?.user.role as TRole}
                   className="[top:calc(72%_+_5px)] right-[5px] absolute"
+                  ownerId={video.ownerId}
                 />
               </div>
             ))}
@@ -83,6 +84,7 @@ export default function Home() {
                   videoId={video.id}
                   userRole={data?.user.role as TRole}
                   className="[top:calc(72%_+_5px)] right-[5px] absolute"
+                  ownerId={video.ownerId}
 
                 />
               </div>

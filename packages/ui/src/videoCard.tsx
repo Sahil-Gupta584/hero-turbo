@@ -21,7 +21,7 @@ export default function VideoCard({ video }: { video: TUserDetailsVideo }) {
         alt="Image"
         width={320}
         height={180}
-        className="w-full rounded rounded-b-none h-[72%] object-contain bg-[#978989]"
+        className="w-full rounded rounded-b-none h-[72%] object-contain bg-[#ededed]"
       />
       <div className="flex items-center gap-2 p-2">
         <img

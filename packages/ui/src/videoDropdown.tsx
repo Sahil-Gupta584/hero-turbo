@@ -138,7 +138,7 @@ export function VideoDropdown({
                 <DeleteVideoModal
                   title={title as string}
                   videoId={videoId}
-                  ownerId={ownerId}
+                  ownerId={ownerId as string}
                 />
               </DropdownItem>
             ) : null}

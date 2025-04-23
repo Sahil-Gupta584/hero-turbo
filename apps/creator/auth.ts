@@ -9,16 +9,19 @@ import { channelAccessScopes } from "./app/constants";
 const result = NextAuth(() => {
   return {
     adapter: PrismaAdapter(prisma),
+    
     providers: [
       GoogleProvider({
         clientId: process.env.YOUTUBE_CLIENT_ID,
         clientSecret: process.env.YOUTUBE_CLIENT_SECRET,
+        allowDangerousEmailAccountLinking: true,
         authorization: {
           params: {
             scope: channelAccessScopes.join(" "),
             access_type: "offline",
             prompt: "consent",
           },
+          
         },
         profile(profile) {
           return {
