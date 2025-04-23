@@ -29,7 +29,7 @@ export async function getVideoDetails(videoId: string) {
       result: video,
     });
   } catch (error) {
-    console.error("Error in getVideoLink:", error);
+    console.error("Error in getVideoDetails:", error);
     return backendRes({ ok: false, error: error as Error, result: null });
   }
 }
@@ -55,7 +55,7 @@ export async function getPlaylists(channelId: string) {
       result: { data: res.data.items },
     });
   } catch (error) {
-    console.error("Error in getVideoLink:", error);
+    console.error("Error in getPlaylists:", error);
     return backendRes({ ok: false, error: error as Error, result: null });
   }
 }

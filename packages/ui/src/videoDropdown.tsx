@@ -13,7 +13,6 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { deleteVideo } from "@repo/lib/actions";
-import { CREATOR_BASE_URL } from "@repo/lib/constants";
 import { HTMLAttributes, useState } from "react";
 
 export function VideoDropdown({
@@ -21,14 +20,18 @@ export function VideoDropdown({
   title,
   userRole,
   className,
+  ownerId,
 }: {
   title?: string;
   videoId: string;
   userRole: "CREATOR" | "EDITOR";
   className?: HTMLAttributes<HTMLElement>["className"];
+  ownerId?: string;
 }) {
   async function onDownload() {
-    const res = await fetch(`${CREATOR_BASE_URL}/api/download/${videoId}`);
+    const res = await fetch(
+      `${process.env.CREATOR_BASE_URL}/api/download/${videoId}`
+    );
     if (!res.ok) {
       addToast({
         description: "Failed to download video",
@@ -132,7 +135,11 @@ export function VideoDropdown({
                 }
                 className="text-danger"
               >
-                <DeleteVideoModal title={title as string} videoId={videoId} />
+                <DeleteVideoModal
+                  title={title as string}
+                  videoId={videoId}
+                  ownerId={ownerId}
+                />
               </DropdownItem>
             ) : null}
           </DropdownMenu>
@@ -145,9 +152,11 @@ export function VideoDropdown({
 function DeleteVideoModal({
   videoId,
   title,
+  ownerId,
 }: {
   title: string;
   videoId: string;
+  ownerId: string;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -155,7 +164,7 @@ function DeleteVideoModal({
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
-    const res = await deleteVideo(videoId);
+    const res = await deleteVideo(videoId, ownerId);
     if (res.ok) {
       addToast({ color: "success", description: "Video deleted successfully" });
     }

@@ -5,96 +5,6 @@ import { Readable } from "nodemailer/lib/xoauth2";
 import { defaultVideoDesc, defaultVideoTitle } from "./constants";
 import { backendRes } from "./utils";
 
-export async function getVideoLink(videoId: string) {
-  try {
-    console.log("videoId", videoId);
-
-    const video = await prisma.video.findUnique({
-      where: {
-        id: videoId,
-      },
-      include: { owner: { include: { channels: true } } },
-    });
-    if (!video) {
-      throw new Error("Video not found");
-    }
-    const auth = new google.auth.OAuth2(
-      process.env.YOUTUBE_CLIENT_ID,
-      process.env.YOUTUBE_CLIENT_SECRET,
-      process.env.YOUTUBE_REDIRECT_URI
-    );
-
-    auth.setCredentials({
-      refresh_token: video?.owner.channels[0]?.refresh_token,
-    });
-
-    const drive = google.drive({ version: "v3", auth });
-
-    const file = await drive.files.get({
-      fileId: video.gDriveId,
-      fields: "webViewLink, webContentLink",
-      // alt:"media"
-    });
-
-    if (!file.data.webViewLink) {
-      throw new Error("Video not found");
-    }
-
-    return backendRes({
-      ok: true,
-      result: {
-        videoLink: file.data.webViewLink.replace(
-          "view?usp=drivesdk",
-          "preview"
-        ),
-      },
-    });
-  } catch (error) {
-    console.error("Error in getVideoLink:", error);
-    return backendRes({ ok: false, error: error as Error, result: null });
-  }
-}
-
-export async function deleteVideo(videoId: string) {
-  try {
-    const video = await prisma.video.findUnique({
-      where: {
-        id: videoId,
-      },
-      include: { owner: { include: { channels: true } } },
-    });
-    if (!video) {
-      throw new Error("Video not found");
-    }
-    const auth = new google.auth.OAuth2(
-      process.env.YOUTUBE_CLIENT_ID,
-      process.env.YOUTUBE_CLIENT_SECRET,
-      process.env.YOUTUBE_REDIRECT_URI
-    );
-
-    auth.setCredentials({
-      refresh_token: video?.owner.channels[0]?.refresh_token,
-    });
-
-    const drive = google.drive({ version: "v3", auth });
-    await prisma.$transaction(async () => {
-      await drive.files.delete({
-        fileId: video.gDriveId,
-      });
-      await prisma.video.delete({
-        where: {
-          id: videoId,
-        },
-      });
-    });
-
-    return backendRes({ ok: true, result: null });
-  } catch (error) {
-    console.error("Error in deleteVideo:", error);
-    return backendRes({ ok: false, error: error as Error, result: null });
-  }
-}
-
 export async function getGoogleServices(userId: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -127,6 +37,81 @@ export async function getGoogleServices(userId: string) {
   }
 }
 
+export async function getVideoLink(videoId: string, ownerId: string) {
+  try {
+    const video = await prisma.video.findUnique({
+      where: {
+        id: videoId,
+      },
+      include: { owner: { include: { channels: true } } },
+    });
+    if (!video) {
+      throw new Error("Video not found");
+    }
+    const { result, error } = await getGoogleServices(video.ownerId);
+    if (!result) {
+      throw new Error("Failed to get Google services: " + error?.message);
+    }
+    const { drive } = result;
+
+    const file = await drive.files.get({
+      fileId: video.gDriveId,
+      fields: "webViewLink, webContentLink",
+    });
+
+    if (!file.data.webViewLink) {
+      throw new Error("Video not found");
+    }
+
+    return backendRes({
+      ok: true,
+      result: {
+        videoLink: file.data.webViewLink.replace(
+          "view?usp=drivesdk",
+          "preview"
+        ),
+      },
+    });
+  } catch (error) {
+    console.error("Error in getVideoLink:", error);
+    return backendRes({ ok: false, error: error as Error, result: null });
+  }
+}
+
+export async function deleteVideo(videoId: string, ownerId: string) {
+  try {
+    const video = await prisma.video.findUnique({
+      where: {
+        id: videoId,
+      },
+      include: { owner: { include: { channels: true } } },
+    });
+    if (!video) {
+      throw new Error("Video not found");
+    }
+    const { result, error } = await getGoogleServices(video.ownerId);
+    if (!result) {
+      throw new Error("Failed to get Google services: " + error?.message);
+    }
+    const { drive } = result;
+    await prisma.$transaction(async () => {
+      await drive.files.delete({
+        fileId: video.gDriveId,
+      });
+      await prisma.video.delete({
+        where: {
+          id: videoId,
+        },
+      });
+    });
+
+    return backendRes({ ok: true, result: null });
+  } catch (error) {
+    console.error("Error in deleteVideo:", error);
+    return backendRes({ ok: false, error: error as Error, result: null });
+  }
+}
+
 type VideoUploadParams = {
   importerId: string;
   ownerId: string;
@@ -144,6 +129,7 @@ export async function uploadVideoAction({
     if (!videoDetails.videoFile) {
       throw new Error("Video file not provided.");
     }
+    console.log("videoDetails", videoDetails);
 
     const { channelId, importerId, ownerId, videoFile, editors } = videoDetails;
     const { result, error } = await getGoogleServices(ownerId);

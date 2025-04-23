@@ -12,7 +12,7 @@ export type TUserDetailsVideo = Prisma.VideoGetPayload<{
 }>;
 
 export default function VideoCard({ video }: { video: TUserDetailsVideo }) {
-  console.log("channel", video.channel.logoUrl);
+  console.log("channel", video.channel);
 
   return (
     <div className="video-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition bg-white border-[#80808040] border-[1px] w-full h-[310px] ">

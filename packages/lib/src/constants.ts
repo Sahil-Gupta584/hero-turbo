@@ -3,4 +3,3 @@ export const defaultVideoDesc = "No description added.";
 export type TRole = "CREATOR" | "EDITOR";
 
 export const CREATOR_BASE_URL = "http://localhost:3000";
-export const EDITOR_BASE_URL = "http://localhost:3001";
