@@ -13,6 +13,7 @@ import {
   Tooltip,
   useDisclosure,
 } from "@heroui/react";
+import { uploadVideoAction } from "@repo/lib/actions";
 import { useForm } from "react-hook-form";
 import { FaPlus, FaUpload } from "react-icons/fa";
 import { TUserDetails } from "../page";
@@ -32,42 +33,38 @@ export default function ImportVideo({
     register,
     handleSubmit,
     watch,
-    setValue,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = useForm<TImportVideo>();
 
   const videoFile = watch("videoFile");
+
   const onSubmit = async (data: TImportVideo) => {
-    if (!userDetails) {
+    if(!userDetails) {
       addToast({ color: "danger", description: "Unauthenticated" });
       return;
     }
-    const formdata = new FormData();
-
-    // Always required
-    formdata.append("videoFile", data.videoFile[0] as File);
-    formdata.append("importerId", userDetails.id as string);
-    formdata.append("ownerId", userDetails.id as string);
-
-    if (userDetails.creators.length === 1) {
-      formdata.append(
-        "creatorId",
-        userDetails.creators[0]?.creatorId as string
-      );
+    if (!data.videoFile[0]) {
+      addToast({ color: "danger", description: "Video file is required" });
+      return;
     }
-
-    const res = await fetch("/api/video/import", {
-      method: "POST",
-      body: formdata,
+    const res = await uploadVideoAction({
+      videoDetails: {
+        videoFile: data.videoFile[0],
+        importerId: userDetails.id,
+        ownerId: data.creatorId,
+        editors: [{ email: userDetails.email, id: userDetails.id }],
+      },
     });
-    const result = await res.json();
-
-    if (result.ok) {
-      addToast({ color: "success", title: "Video Imported successfully!" });
-      onClose();
-    } else {
-      addToast({ color: "danger", title: "Failed to import video!" });
+    if (!res.ok) {
+      addToast({ color: "danger", description: "Error uploading video" });
+      return;
     }
+    addToast({
+      color: "success",
+      title: "Video Imported Successfully!",
+    });
+    onClose();
+   
   };
 
   return (
@@ -116,12 +113,16 @@ export default function ImportVideo({
 
                 <Select
                   classNames={{
-                    label: "group-data-[filled=true]:-translate-y-5 top-[22px]",
+                    label: "group-data-[filled=true]:-translate-y-5 top-[24px]",
                     trigger: "min-h-16",
                     listboxWrapper: "max-h-[400px]",
                   }}
                   items={userDetails?.creators}
-                  defaultSelectedKeys={userDetails?.creators?.length>1?[]:userDetails?.creators[0]?.creatorId}
+                  defaultSelectedKeys={
+                    userDetails?.creators && userDetails?.creators.length > 1
+                      ? []
+                      : [userDetails?.creators[0]?.creatorId as string]
+                  }
                   label="Select a Creator"
                   listboxProps={{
                     itemClasses: {
@@ -163,9 +164,15 @@ export default function ImportVideo({
                     ));
                   }}
                   variant="bordered"
+                  {...register("creatorId", {
+                    required: {
+                      value: true,
+                      message: "Creator is required",
+                    },
+                  })}
                 >
                   {({ creator }) => (
-                    <SelectItem key={creator.id} textValue={creator.name} >
+                    <SelectItem key={creator.id} textValue={creator.name}>
                       <div className="flex gap-2 items-center">
                         <Avatar
                           alt={creator.name}

@@ -3,12 +3,12 @@ import { addToast } from "@heroui/react";
 import { useState } from "react";
 import { UseFormRegister, UseFormWatch } from "react-hook-form";
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
-import { TVideoForm } from "../page";
+import { TVideoDetails } from "../page";
 
 interface ShowThumbnailsProps {
-    register: UseFormRegister<TVideoForm>
+    register: UseFormRegister<TVideoDetails>
     handleRemoveImage: () => void
-    watch: UseFormWatch<TVideoForm>
+    watch: UseFormWatch<TVideoDetails>
 }
 export default function ShowThumbnails({ watch, handleRemoveImage, register, }: ShowThumbnailsProps) {
     const [newFileUrl, setNewFileUrl] = useState('')

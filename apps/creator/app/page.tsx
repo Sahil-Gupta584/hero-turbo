@@ -4,12 +4,14 @@ import { getCreatorDetails } from "@/lib/dbActions";
 import { addToast, Button, Skeleton } from "@heroui/react";
 import Header from "@repo/ui/header";
 import VideoCard from "@repo/ui/videoCard";
+import { VideoDropdown } from "@repo/ui/videoDropdown";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import DrawerComponent from "./components/drawer";
 import { dummyVideos } from "./constants";
 import ImportVideo from "./modals/importVideo";
+import { TRole } from "@repo/lib/constants";
 
 export type TUserDetails = Awaited<
   ReturnType<typeof getCreatorDetails>
@@ -49,24 +51,41 @@ export default function Home() {
         <div className="video-cards-container grid p-4 gap-[24px_11px]">
           {true &&
             dummyVideos.map((video) => (
-              <Link
-                key={video.id}
-                href={`/videos/${video.id}`}
-                className="block"
-              >
-                <VideoCard video={video} />
-              </Link>
+              <div className="relative" key={video.id}>
+                <Link
+                  key={video.id}
+                  href={`/videos/${video.id}`}
+                  className="block"
+                >
+                  <VideoCard video={video} />
+                </Link>
+                <VideoDropdown
+                  title={video.title as string}
+                  videoId={video.id}
+                  userRole={data?.user.role as TRole}
+                  className="[top:calc(72%_+_5px)] right-[5px] absolute"
+                />
+              </div>
             ))}
 
           {userDetails &&
             userDetails.ownedVideos.map((video) => (
-              <Link
-                key={video.id}
-                href={`/videos/${video.id}`}
-                className="block"
-              >
-                <VideoCard video={video} />
-              </Link>
+              <div className="relative" key={video.id}>
+                <Link
+                  key={video.id}
+                  href={`/videos/${video.id}`}
+                  className="block"
+                >
+                  <VideoCard video={video} />
+                </Link>
+                <VideoDropdown
+                  title={video.title as string}
+                  videoId={video.id}
+                  userRole={data?.user.role as TRole}
+                  className="[top:calc(72%_+_5px)] right-[5px] absolute"
+
+                />
+              </div>
             ))}
 
           {!userDetails && (

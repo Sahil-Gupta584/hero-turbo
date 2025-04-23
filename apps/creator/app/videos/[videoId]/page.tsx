@@ -11,7 +11,9 @@ import {
   SelectItem,
   Textarea,
 } from "@heroui/react";
-import { Video } from "@repo/db";
+import { TRole } from "@repo/lib/constants";
+import VideoComponent from "@repo/ui/videoComponent";
+import { VideoDropdown } from "@repo/ui/videoDropdown";
 import { youtube_v3 } from "googleapis";
 import { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,21 +21,20 @@ import ChanNEditrsFields from "./components/ChanNEditrsFields";
 import { DateTimePicker } from "./components/modals/dateTimePicker";
 import PublishNow from "./components/modals/publishNow";
 import ShowThumbnails from "./components/showThumbnails";
-import VideoComponent from "./components/video";
 import VideoFormSkeleton from "./components/VideoFormSkeleton";
 
-export type TVideoForm = Video & {
-  newThumbnailFile?: FileList;
-  selectedEditorsId?: string[];
-};
 type TPlaylists = youtube_v3.Schema$Playlist[] | undefined;
 
 type Props = {
   params: Promise<{ videoId: string }>;
 };
-
+export type TVideoDetails = Awaited<
+  ReturnType<typeof getVideoDetails>
+>["result"] & {
+  newThumbnailFile?: FileList;
+} & { selectedEditorsId: string[] };
 export default function Page({ params }: Props) {
-  const [videoDetails, setVideoDetails] = useState<null | TVideoForm>(null);
+  const [videoDetails, setVideoDetails] = useState<TVideoDetails | null>(null);
   const [playlists, setPlaylists] = useState<TPlaylists>();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -44,26 +45,34 @@ export default function Page({ params }: Props) {
       const details = await getVideoDetails(videoId);
       if (details.ok && details.result) {
         console.log("details", details.result);
-        setVideoDetails(details.result);
+        setVideoDetails({
+          ...details.result,
+          selectedEditorsId: details.result.editors.map((e) => e.editorId),
+        });
+
+        const playlistsRes = await getPlaylists(details.result.ownerId);
+        if (playlistsRes.ok && playlistsRes.result?.data) {
+          setPlaylists(playlistsRes.result.data);
+        }
       }
 
       if (!details.ok && details.error) {
         addToast({
           color: "danger",
-          description: 'Failed to get Video Details.',
+          description: "Failed to get Video Details.",
         });
-      }
-
-      const playlistsRes = await getPlaylists();
-      if (playlistsRes.ok && playlistsRes.result?.data) {
-        setPlaylists(playlistsRes.result.data);
       }
     })();
   }, [params]);
   return (
     <>
       {videoDetails ? (
-        <VideoPage previousData={videoDetails} playlists={playlists} isEditing={isEditing} setIsEditing={setIsEditing} />
+        <VideoPage
+          previousData={videoDetails}
+          playlists={playlists}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+        />
       ) : (
         <VideoFormSkeleton />
       )}
@@ -73,11 +82,13 @@ export default function Page({ params }: Props) {
 
 export function VideoPage({
   previousData,
-  playlists,isEditing,setIsEditing
+  playlists,
+  isEditing,
+  setIsEditing,
 }: {
-  previousData: TVideoForm;
+  previousData: TVideoDetails;
   playlists: TPlaylists;
-  isEditing:boolean;
+  isEditing: boolean;
   setIsEditing: (value: boolean) => void;
 }) {
   const {
@@ -86,15 +97,19 @@ export function VideoPage({
     watch,
     reset,
     setValue,
-    formState: { errors, isSubmitting, },getValues
-  } = useForm<TVideoForm>({
+    formState: { errors, isSubmitting },
+    getValues,
+  } = useForm<TVideoDetails>({
     disabled: !isEditing,
   });
 
   useEffect(() => {
     (async () => {
       if (previousData) {
-        reset(previousData);
+        reset({
+          ...previousData,
+          selectedEditorsId: previousData.editors.map((e) => e.editorId),
+        });
       }
     })();
   }, [previousData, reset]);
@@ -143,7 +158,7 @@ export function VideoPage({
     };
   }, [isEditing]);
 
-  async function handleVideoSave(formDataRaw: TVideoForm) {
+  async function handleVideoSave(formDataRaw: TVideoDetails) {
     if (formDataRaw.newThumbnailFile && formDataRaw.newThumbnailFile[0]) {
       const { result } = await UploadImgGetUrl({
         imgFile: formDataRaw.newThumbnailFile[0],
@@ -175,7 +190,7 @@ export function VideoPage({
   }
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <VideoComponent gDriveId={previousData.gDriveId} />
+      <VideoComponent videoId={previousData.id} />
 
       <div className="flex sm:flex-row flex-col gap-4 font-semibold my-4 sm:mb-6">
         <DateTimePicker isEditing={isEditing} videoDetails={previousData} />
@@ -198,7 +213,6 @@ export function VideoPage({
                 {isEditing ? "Save" : "Edits"}
               </Button>
             )}
-
             {!isEditing && (
               <Button
                 color="primary"
@@ -210,7 +224,6 @@ export function VideoPage({
                 Edit
               </Button>
             )}
-
             {isEditing && (
               <Button
                 color="danger"
@@ -224,16 +237,20 @@ export function VideoPage({
                 Cancel
               </Button>
             )}
+            <VideoDropdown
+              title={previousData.title as string}
+              videoId={previousData.id}
+              userRole={previousData.owner.role as TRole}
+              className="mt-1"
+            />
           </div>
         </li>
         <div className="mt-4 space-y-8">
           <ChanNEditrsFields
-            creatorId={previousData.ownerId}
             isEditing={isEditing}
             register={register}
             setValue={setValue}
-            videoId={previousData.id}
-            watch={watch}
+            previousData={previousData}
           />
           <Textarea
             isClearable={isEditing}

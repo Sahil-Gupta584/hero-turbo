@@ -1,13 +1,13 @@
 import { getFileFromDrive } from "@/lib/utils";
 import { prisma } from "@repo/db";
+import { getGoogleServices } from "@repo/lib/actions";
 import axios from "axios";
-import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const formdata = await req.json();
-    console.log("formdata", formdata);
+    // console.log("formdata", formdata);
 
     if (!formdata.videoId) {
       return NextResponse.json({ message: "Video Id is required", ok: false });
@@ -21,28 +21,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Video does not exist", ok: false });
     }
 
-    if (
-      !process.env.YOUTUBE_CLIENT_ID ||
-      !process.env.YOUTUBE_CLIENT_SECRET ||
-      !process.env.YOUTUBE_REDIRECT_URI ||
-      !process.env.YOUTUBE_REFRESH_TOKEN
-    ) {
-      throw new Error(
-        "Missing YouTube API credentials in environment variables"
-      );
+    const { result, error } = await getGoogleServices(isVideoExist.ownerId);
+    if (!result) {
+      throw new Error("Failed to get Google services: " + error?.message);
     }
-
-    const oauth2Client = new google.auth.OAuth2(
-      process.env.YOUTUBE_CLIENT_ID,
-      process.env.YOUTUBE_CLIENT_SECRET,
-      process.env.YOUTUBE_REDIRECT_URI
+    const { youtube } = result;
+    const gDriveStream = await getFileFromDrive(
+      isVideoExist.gDriveId,
+      isVideoExist.ownerId
     );
-    oauth2Client.setCredentials({
-      refresh_token: process.env.YOUTUBE_REFRESH_TOKEN,
-    });
-
-    const youtube = google.youtube({ version: "v3", auth: oauth2Client });
-    const gDriveStream = await getFileFromDrive(isVideoExist.gDriveId);
     const videoResponse = await youtube.videos.insert({
       part: ["snippet", "status"],
       requestBody: {
@@ -61,7 +48,7 @@ export async function POST(req: NextRequest) {
         mimeType: "video/mp4",
       },
     });
-    // console.log("videoResponse", videoResponse);
+
     if (isVideoExist.thumbnailUrl?.trim()) {
       const imageResponse = await axios.get(isVideoExist.thumbnailUrl, {
         responseType: "arraybuffer",

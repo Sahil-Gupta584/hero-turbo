@@ -1,143 +1,246 @@
+"use server";
 import { prisma } from "@repo/db";
 import { google } from "googleapis";
-import nodemailer from "nodemailer";
+import { Readable } from "nodemailer/lib/xoauth2";
+import { defaultVideoDesc, defaultVideoTitle } from "./constants";
 import { backendRes } from "./utils";
 
-export async function getVideoDetails(videoId: string) {
-    try {
-        if (!videoId) throw new Error("Video ID is required");
+export async function getVideoLink(videoId: string) {
+  try {
+    console.log("videoId", videoId);
 
-        const video = await prisma.video.findUnique({
-            where: {
-                id: videoId,
-            },
-        });
-        if (!video) throw new Error("Video not found");
-
-        return backendRes({
-            ok: true,
-            result: video,
-        });
-    } catch (error) {
-        console.error("Error in getVideoLink:", error);
-        return backendRes({ ok: false, error: error as Error, result: null });
+    const video = await prisma.video.findUnique({
+      where: {
+        id: videoId,
+      },
+      include: { owner: { include: { channels: true } } },
+    });
+    if (!video) {
+      throw new Error("Video not found");
     }
-}
-export async function getVideoLink(gDriveId: string) {
-    try {
-        const auth = new google.auth.OAuth2(
-            process.env.YOUTUBE_CLIENT_ID,
-            process.env.YOUTUBE_CLIENT_SECRET,
-            process.env.YOUTUBE_REDIRECT_URI
-        );
-        auth.setCredentials({ refresh_token: process.env.YOUTUBE_REFRESH_TOKEN });
+    const auth = new google.auth.OAuth2(
+      process.env.YOUTUBE_CLIENT_ID,
+      process.env.YOUTUBE_CLIENT_SECRET,
+      process.env.YOUTUBE_REDIRECT_URI
+    );
 
-        const drive = google.drive({ version: "v3", auth });
+    auth.setCredentials({
+      refresh_token: video?.owner.channels[0]?.refresh_token,
+    });
 
-        const file = await drive.files.get({
-            fileId: gDriveId,
-            fields: "webViewLink",
-        });
+    const drive = google.drive({ version: "v3", auth });
 
-        if (!file.data.webViewLink) {
-            throw new Error("Video not found");
-        }
+    const file = await drive.files.get({
+      fileId: video.gDriveId,
+      fields: "webViewLink, webContentLink",
+      // alt:"media"
+    });
 
-        return backendRes({
-            ok: true,
-            result: {
-                videoLink: file.data.webViewLink.replace("view?usp=drivesdk", "preview"),
-            },
-        });
-    } catch (error) {
-        console.error("Error in getVideoLink:", error);
-        return backendRes({ ok: false, error: error as Error, result: null });
+    if (!file.data.webViewLink) {
+      throw new Error("Video not found");
     }
+
+    return backendRes({
+      ok: true,
+      result: {
+        videoLink: file.data.webViewLink.replace(
+          "view?usp=drivesdk",
+          "preview"
+        ),
+      },
+    });
+  } catch (error) {
+    console.error("Error in getVideoLink:", error);
+    return backendRes({ ok: false, error: error as Error, result: null });
+  }
 }
 
-export async function getPlaylists() {
-    try {
-        const auth = new google.auth.OAuth2(
-            process.env.YOUTUBE_CLIENT_ID,
-            process.env.YOUTUBE_CLIENT_SECRET,
-            process.env.YOUTUBE_REDIRECT_URI
-        );
-        auth.setCredentials({ refresh_token: process.env.YOUTUBE_REFRESH_TOKEN });
-
-        const youtube = google.youtube({ version: "v3", auth });
-
-        const res = await youtube.playlists.list({
-            // fileId: gDriveId,
-            part: ["snippet"],
-            channelId: "UCZsNBvo4uxh6GdA7Y-ERqOw",
-        });
-
-        // console.log("res", res.data);
-
-        return backendRes({
-            ok: true,
-            result: { data: res.data.items },
-        });
-    } catch (error) {
-        console.error("Error in getVideoLink:", error);
-        return backendRes({ ok: false, error: error as Error, result: null });
+export async function deleteVideo(videoId: string) {
+  try {
+    const video = await prisma.video.findUnique({
+      where: {
+        id: videoId,
+      },
+      include: { owner: { include: { channels: true } } },
+    });
+    if (!video) {
+      throw new Error("Video not found");
     }
+    const auth = new google.auth.OAuth2(
+      process.env.YOUTUBE_CLIENT_ID,
+      process.env.YOUTUBE_CLIENT_SECRET,
+      process.env.YOUTUBE_REDIRECT_URI
+    );
+
+    auth.setCredentials({
+      refresh_token: video?.owner.channels[0]?.refresh_token,
+    });
+
+    const drive = google.drive({ version: "v3", auth });
+    await prisma.$transaction(async () => {
+      await drive.files.delete({
+        fileId: video.gDriveId,
+      });
+      await prisma.video.delete({
+        where: {
+          id: videoId,
+        },
+      });
+    });
+
+    return backendRes({ ok: true, result: null });
+  } catch (error) {
+    console.error("Error in deleteVideo:", error);
+    return backendRes({ ok: false, error: error as Error, result: null });
+  }
 }
 
-export default async function UploadImgGetUrl({ imgFile }: { imgFile: File }) {
-    try {
-        const blob = new Blob([imgFile], { type: imgFile.type });
-
-        const form = new FormData();
-        form.append("image", blob, imgFile.name);
-
-        const res = await fetch("https://api.imgbb.com/1/upload?key=b10b7ca5ecd048d6a0ed9f9751cebbdc", {
-            method: "POST",
-            body: form,
-        });
-
-        const result = await res.json();
-
-        return backendRes({
-            ok: true,
-            result: { displayUrl: result.data.display_url },
-        });
-    } catch (error) {
-        backendRes({ ok: false, error: error as Error, result: null });
-        throw error;
+export async function getGoogleServices(userId: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { channels: true },
+    });
+    if (!user) {
+      throw new Error("User not found");
     }
+    const auth = new google.auth.OAuth2(
+      process.env.YOUTUBE_CLIENT_ID,
+      process.env.YOUTUBE_CLIENT_SECRET,
+      process.env.YOUTUBE_REDIRECT_URI
+    );
+
+    auth.setCredentials({
+      refresh_token: user.channels[0]?.refresh_token,
+    });
+
+    const youtube = google.youtube({ version: "v3", auth });
+    const drive = google.drive({ version: "v3", auth });
+
+    return backendRes({
+      ok: true,
+      result: { youtube, drive },
+    });
+  } catch (error) {
+    console.error("Error in getGoogleServices:", error);
+    return backendRes({ ok: false, error: error as Error, result: null });
+  }
 }
 
-export async function sendInviteLink(email: string, creatorEmail: string) {
-    try {
-        if (email === creatorEmail) {
-            throw new Error("Buddy, You can't invite yourself🤗! ");
-        }
+type VideoUploadParams = {
+  importerId: string;
+  ownerId: string;
+  editors?: { id: string; email: string }[];
+  channelId?: string;
+  videoFile: File;
+};
 
-        const isEditorExist = await prisma.creatorEditor.findFirst({
-            where: { creator: { email: creatorEmail }, editor: { email } },
-        });
-        if (isEditorExist) {
-            throw new Error("Editor already in workspace your. ");
-        }
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.NODEMAILER_USER,
-                pass: process.env.NODEMAILER_PASS,
-            },
-        });
-
-        transporter.sendMail({
-            from: process.env.NODEMAILER_USER,
-            to: email,
-            subject: "Invite Link",
-            text: "Click here to join: https://example.com/invite",
-            html: `<p>Click <a href="https://example.com/invite">here</a> to join</p>`,
-        });
-        return backendRes({ ok: true, result: true });
-    } catch (error) {
-        console.error("Error in sendInviteLink:", error);
-        return backendRes({ ok: false, error: error as Error, result: null });
+export async function uploadVideoAction({
+  videoDetails,
+}: {
+  videoDetails: VideoUploadParams;
+}) {
+  try {
+    if (!videoDetails.videoFile) {
+      throw new Error("Video file not provided.");
     }
+
+    const { channelId, importerId, ownerId, videoFile, editors } = videoDetails;
+    const { result, error } = await getGoogleServices(ownerId);
+    if (!result) {
+      throw new Error("Failed to get Google services: " + error?.message);
+    }
+    const { drive } = result;
+    const folderId = await getOrCreateFolder(drive, "Syncly");
+
+    const { gDriveId, videoId } = await prisma.$transaction(async (tx) => {
+      const buffer = await videoFile.arrayBuffer();
+      const stream = bufferToStream(buffer);
+
+      const uploadedFileData = await drive.files.create({
+        requestBody: {
+          name: videoFile.name,
+          parents: [folderId],
+          mimeType: videoFile.type,
+        },
+        media: {
+          mimeType: videoFile.type,
+          body: stream,
+        },
+        fields: "id, thumbnailLink",
+      });
+
+      if (!uploadedFileData.data.id) {
+        throw new Error("Failed to upload video to Google Drive");
+      }
+      const video = await prisma.video.create({
+        data: {
+          createdAt: `${Date.now() / 1000}`,
+          gDriveId: uploadedFileData.data.id,
+          title: defaultVideoTitle,
+          description: defaultVideoDesc,
+          importedById: importerId,
+          ownerId,
+          categoryId: "22",
+          tags: "",
+          channelId,
+          thumbnailUrl: uploadedFileData.data.thumbnailLink,
+        },
+      });
+      return { videoId: video.id, gDriveId: uploadedFileData.data.id };
+    });
+
+    if (editors) {
+      for (const { email, id } of editors) {
+        await prisma.videoEditor.create({
+          data: { videoId: videoId, editorId: id },
+        });
+
+        await drive.permissions.create({
+          fileId: gDriveId,
+          requestBody: {
+            role: "reader",
+            type: "user",
+            emailAddress: email,
+          },
+        });
+      }
+    }
+
+    return { ok: true, message: "Upload complete" };
+  } catch (error: any) {
+    console.error("Error from uploadVideoAction:", error);
+    return { ok: false, error: error.message ?? "Something went wrong" };
+  }
+}
+
+async function getOrCreateFolder(
+  drive: any,
+  folderName: string
+): Promise<string> {
+  const folderSearch = await drive.files.list({
+    q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+    fields: "files(id, name)",
+  });
+
+  if (folderSearch.data.files.length > 0) {
+    return folderSearch.data.files[0].id!;
+  }
+
+  const folder = await drive.files.create({
+    requestBody: {
+      name: folderName,
+      mimeType: "application/vnd.google-apps.folder",
+    },
+    fields: "id",
+  });
+
+  return folder.data.id!;
+}
+
+function bufferToStream(buffer: ArrayBuffer): Readable {
+  const readable = new Readable();
+  readable.push(Buffer.from(buffer));
+  readable.push(null); // End the stream
+  return readable;
 }

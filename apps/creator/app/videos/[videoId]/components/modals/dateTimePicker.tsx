@@ -13,11 +13,11 @@ import {
 import moment from "moment";
 import { useForm, UseFormRegister, UseFormWatch } from "react-hook-form";
 import { MdSchedule } from "react-icons/md";
-import { TVideoForm } from "../../page";
+import { TVideoDetails } from "../../page";
 
 type TDateTimePicker = {
   isEditing: boolean;
-  videoDetails: TVideoForm;
+  videoDetails: TVideoDetails;
 };
 
 export function DateTimePicker({ isEditing, videoDetails, }: TDateTimePicker) {

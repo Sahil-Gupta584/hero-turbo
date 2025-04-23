@@ -72,10 +72,12 @@ export default function DrawerComponent({ session }: { session: Session }) {
                 <div className="flex gap-4 items-center flex-wrap p-4">
                   {creators &&
                     creators.map(({ creator }, i) => (
-                      <>
+                      <div
+                      key={creator.id}
+
+                      >
                         <div
                           className="flex justify-between items-center w-full "
-                          key={creator.id}
                         >
                           <div
                             className="flex gap-4 items-center pl-10"
@@ -100,7 +102,7 @@ export default function DrawerComponent({ session }: { session: Session }) {
                         {i !== 0 && (
                           <div className="h-[1px] bg-gray-300 w-full my-4" />
                         )}
-                      </>
+                      </div>
                     ))}
                 </div>
               </DrawerBody>

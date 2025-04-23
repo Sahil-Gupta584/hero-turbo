@@ -2,12 +2,7 @@
 
 import { Prisma } from "@repo/db";
 import imageInputPlaceholder from "@repo/lib/assets/imageInputPlaceholder.png";
-import Image from "next/image";
-import Tag from "./tag";
-
-// export type TUserDetailsVideo = NonNullable<
-//   Awaited<ReturnType<typeof getCreatorDetails>>["result"]
-// >["ownedVideos"][number];
+import Tag from "./tag.tsx";
 
 export type TUserDetailsVideo = Prisma.VideoGetPayload<{
   include: {
@@ -17,24 +12,26 @@ export type TUserDetailsVideo = Prisma.VideoGetPayload<{
 }>;
 
 export default function VideoCard({ video }: { video: TUserDetailsVideo }) {
+  console.log("channel", video.channel.logoUrl);
+
   return (
     <div className="video-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition bg-white border-[#80808040] border-[1px] w-full h-[310px] ">
-      <Image
-        src={video.thumbnailUrl || imageInputPlaceholder}
+      <img
+        src={video.thumbnailUrl || imageInputPlaceholder.src}
         alt="Image"
         width={320}
         height={180}
-        className="w-full rounded rounded-b-none h-[72%] object-contain bg-[#e7e7e7]"
+        className="w-full rounded rounded-b-none h-[72%] object-contain bg-[#978989]"
       />
       <div className="flex items-center gap-2 p-2">
         <img
-          className="w-12 h-12 rounded-full "
+          className="w-12 h-12 rounded-full self-start"
           src={
             video.channel ? video.channel.logoUrl : imageInputPlaceholder.src
           }
         />
 
-        <div className="flex flex-col">
+        <div className="flex flex-col grow">
           <span className="font-semibold text-sm line-clamp-2">
             {video.title}
           </span>
@@ -45,9 +42,8 @@ export default function VideoCard({ video }: { video: TUserDetailsVideo }) {
             ImportedBy: {video.importedBy.name}
           </span>
         </div>
-        <div className="ml-auto">
-          <Tag text={video.videoStatus} />
-        </div>
+
+        <Tag text={video.videoStatus} className=" self-end" />
       </div>
     </div>
   );

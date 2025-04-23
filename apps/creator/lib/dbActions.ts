@@ -1,10 +1,15 @@
 "use server";
 
-import { TVideoForm } from "@/app/videos/[videoId]/page";
+import { TVideoDetails } from "@/app/videos/[videoId]/page";
 import { prisma } from "@repo/db";
+import { getGoogleServices } from "@repo/lib/actions";
+import { defaultVideoDesc, defaultVideoTitle } from "@repo/lib/constants";
 import { backendRes } from "@repo/lib/utils";
 import console from "console";
 import { google } from "googleapis";
+import moment from "moment";
+import { revalidatePath } from "next/cache";
+import { Readable } from "stream";
 
 export async function getUserVideos(userId: string) {
   try {
@@ -23,51 +28,6 @@ export async function getUserVideos(userId: string) {
     return backendRes({ ok: true, result: res });
   } catch (error) {
     console.log("error from getUserVideos", error);
-    return backendRes({ ok: false, error: error as Error, result: null });
-  }
-}
-
-export async function updateVideoDetails(videoDetails: Partial<TVideoForm>) {
-  try {
-    console.log("videoDetails", videoDetails);
-    
-    const res = await prisma.$transaction(async (tx) => {
-      const updatedVideo = await tx.video.update({
-        where: { id: videoDetails.id },
-        data: {
-          categoryId: videoDetails.categoryId,
-          description: videoDetails.description,
-          playlistIds: videoDetails.playlistIds,
-          thumbnailUrl: videoDetails.thumbnailUrl,
-          tags: videoDetails.tags,
-          title: videoDetails.title,
-          scheduledAt: videoDetails.scheduledAt,
-        },
-      });
-      
-      if (videoDetails.selectedEditorsId !== undefined) {
-        // Delete all existing editor connections for this video
-        await tx.videoEditor.deleteMany({
-          where: { videoId: videoDetails.id }
-        });
-        
-        // Create new connections only for the selected editors
-        if (videoDetails.selectedEditorsId.length > 0) {
-          await tx.videoEditor.createMany({
-            data: videoDetails.selectedEditorsId.map(editorId => ({
-              videoId: videoDetails.id!,
-              editorId: editorId
-            }))
-          });
-        }
-      }
-      
-      return updatedVideo;
-    });
-    
-    return backendRes({ ok: true, result: res });
-  } catch (error) {
-    console.log("error from updateVideoDetails", error);
     return backendRes({ ok: false, error: error as Error, result: null });
   }
 }
@@ -102,7 +62,6 @@ export async function addChannel({
   userId: string;
 }) {
   try {
-    console.log("code:", code);
 
     const oauth2Client = new google.auth.OAuth2(
       process.env.YOUTUBE_CLIENT_ID,
@@ -111,7 +70,6 @@ export async function addChannel({
     );
 
     const { tokens } = await oauth2Client.getToken(code);
-    console.log("tokens:", tokens);
     oauth2Client.setCredentials(tokens);
 
     if (!tokens.access_token || !tokens.refresh_token) {
@@ -127,7 +85,6 @@ export async function addChannel({
       part: ["snippet", "contentDetails"],
       mine: true,
     });
-    console.log("channelResponse:", JSON.stringify(channelResponse.data));
     if (
       !channelResponse.data.items ||
       channelResponse.data.items.length === 0 ||
@@ -256,4 +213,136 @@ export async function getVideoEditors({ videoId }: { videoId: string }) {
     console.log("error from getVideoEditors", error);
     return backendRes({ ok: false, error: error as Error, result: null });
   }
+}
+
+
+
+
+
+export async function updateVideoDetails(videoDetails: TVideoDetails) {
+  try {
+    console.log("videoDetails", videoDetails);
+    const {
+      categoryId,
+      id,
+      playlistIds,
+      scheduledAt,
+      selectedEditorsId,
+      tags,
+      thumbnailUrl,
+      title,
+      description,
+      gDriveId,
+      editors,
+    } = videoDetails;
+    const res = await prisma.$transaction(async (tx) => {
+      const updatedVideo = await tx.video.update({
+        where: { id: videoDetails.id },
+        data: {
+          categoryId: categoryId,
+          description: description,
+          playlistIds: playlistIds,
+          thumbnailUrl: thumbnailUrl,
+          tags: tags,
+          title: title,
+          scheduledAt: scheduledAt,
+        },
+        include: { owner: true },
+      });
+      const existingEditorIds = editors.map((e) => e.editorId);
+
+      const toAdd = selectedEditorsId.filter(
+        (id) => !existingEditorIds.includes(id)
+      );
+      const toRemove = existingEditorIds.filter(
+        (id) => !selectedEditorsId.includes(id)
+      );
+
+      await tx.videoEditor.deleteMany({
+        where: {
+          videoId: id,
+          editorId: { in: toRemove },
+        },
+      });
+
+      // Add only new editors
+      await tx.videoEditor.createMany({
+        data: toAdd.map((editorId) => ({
+          videoId: id!,
+          editorId,
+        })),
+      });
+      return updatedVideo;
+    });
+    await updateGoogleDrivePermissions({
+      gDriveId,
+      selectedEditorEmails: editors.map((e) => e.editor.email),
+      videoOwnerEmail: res.owner.email,
+      videoOwnerId: res.owner.id,
+    });
+
+    return backendRes({ ok: true, result: res });
+  } catch (error) {
+    console.log("error from updateVideoDetails", error);
+    return backendRes({ ok: false, error: error as Error, result: null });
+  }
+}
+
+async function updateGoogleDrivePermissions({
+  gDriveId,
+  selectedEditorEmails,
+  videoOwnerEmail,
+  videoOwnerId,
+}: {
+  gDriveId: string;
+  selectedEditorEmails: string[];
+  videoOwnerEmail: string;
+  videoOwnerId: string;
+}) {
+  const { result } = await getGoogleServices(videoOwnerId); // or ownerId if needed
+  if (!result) throw new Error("Failed to get Google services");
+
+  const { drive } = result;
+
+  const permissions = await drive.permissions.list({
+    fileId: gDriveId,
+    fields: "permissions(id,emailAddress)",
+  });
+
+  const existingEmails =
+    permissions.data.permissions?.map((p) => p.emailAddress) ?? [];
+
+  const toGrant = selectedEditorEmails.filter(
+    (email) => !existingEmails.includes(email)
+  );
+  const toRevoke = existingEmails.filter(
+    (email) => !selectedEditorEmails.includes(email as string)
+  );
+
+  await Promise.all(
+    toGrant.map((email) =>
+      drive.permissions.create({
+        fileId: gDriveId,
+        requestBody: {
+          role: "writer",
+          type: "user",
+          emailAddress: email,
+        },
+      })
+    )
+  );
+
+  await Promise.all(
+    permissions.data
+      .permissions!.filter(
+        (p) =>
+          toRevoke.includes(p.emailAddress!) &&
+          p.emailAddress !== videoOwnerEmail
+      )
+      .map((p) => {
+        if (p.emailAddress === videoOwnerEmail) return;
+
+        drive.permissions.delete({ fileId: gDriveId, permissionId: p.id! });
+      })
+  );
 }

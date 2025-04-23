@@ -1,17 +1,23 @@
-import { getVideoLink } from "@/lib/actions";
-import { Skeleton } from "@heroui/react";
+import { addToast, Skeleton } from "@heroui/react";
+import { getVideoLink } from "@repo/lib/actions";
 import { useEffect, useState } from "react";
 
-export default function VideoComponent({ gDriveId }: { gDriveId: string }) {
+export default function VideoComponent({ videoId }: { videoId: string }) {
   const [videoLink, setVideoLink] = useState<null | string>(null);
   useEffect(() => {
     (async () => {
-      const res = await getVideoLink(gDriveId);
+      const res = await getVideoLink(videoId);
       if (res.ok && res.result) {
         setVideoLink(res.result?.videoLink);
       }
+      if (!res.ok) {
+        addToast({
+          description: "Failed to load video",
+          color: "danger",
+        });
+      }
     })();
-  }, [gDriveId]);
+  }, [videoId]);
   return (
     <div className="rounded-lg overflow-hidden bg-white shadow-[0px_0px_7px_-2px_gray] ">
       {videoLink ? (

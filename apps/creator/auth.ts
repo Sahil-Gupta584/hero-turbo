@@ -1,9 +1,10 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@repo/db";
-import { google } from "googleapis";
+import { getGoogleServices } from "@repo/lib/actions";
+import { TRole } from "@repo/lib/constants";
 import NextAuth, { NextAuthResult } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { channelAccessScopes, TRole } from "./app/constants";
+import { channelAccessScopes } from "./app/constants";
 
 const result = NextAuth(() => {
   return {
@@ -34,12 +35,6 @@ const result = NextAuth(() => {
     events: {
       async linkAccount({ user }) {
         try {
-          const oauth2Client = new google.auth.OAuth2(
-            process.env.YOUTUBE_CLIENT_ID!,
-            process.env.YOUTUBE_CLIENT_SECRET!,
-            process.env.YOUTUBE_REDIRECT_URI!
-          );
-
           // Optional: fetch user's account to get refresh token
           const dbAccount = await prisma.account.findFirst({
             where: {
@@ -52,12 +47,15 @@ const result = NextAuth(() => {
             console.warn("No refresh_token found in account for user", user.id);
             return;
           }
-
-          oauth2Client.setCredentials({
-            refresh_token: dbAccount.refresh_token,
-          });
-
-          const youtube = google.youtube({ version: "v3", auth: oauth2Client });
+          if (!user.id) {
+            console.warn("No user id found in account for user", user.id);
+            return;
+          }
+          const { result, error } = await getGoogleServices(user.id);
+          if (!result) {
+            throw new Error("Failed to get Google services: " + error?.message);
+          }
+          const { youtube } = result;
           const res = await youtube.channels.list({
             part: ["snippet", "contentDetails"],
             mine: true,
@@ -86,39 +84,13 @@ const result = NextAuth(() => {
               },
             },
           });
-          // console.log("YouTube channel created:", channel);
         } catch (error) {
           console.error("Error creating user:", error);
         }
       },
     },
     callbacks: {
-      async jwt({ token, user, trigger, session, account }) {
-        // Add refresh token to JWT on initial sign in
-        if (account && account.refresh_token) {
-          token.refresh_token = account.refresh_token;
-        }
-
-        // If we don't have a refresh token in the token but user is authenticated,
-        // try to fetch it from the database
-        if (!token.refresh_token && token.email) {
-          const dbAccount = await prisma.account.findFirst({
-            where: {
-              user: {
-                email: token.email,
-              },
-              provider: "google",
-            },
-            // select: {
-            //     refresh_token: true,
-            // },
-          });
-
-          // if (dbAccount?.refresh_token) {
-          //     token.refresh_token = dbAccount.refresh_token;
-          // }
-        }
-
+      async jwt({ token }) {
         // Add user info to token
         if (!token.role) {
           const dbUser = await prisma.user.findUnique({
@@ -135,10 +107,6 @@ const result = NextAuth(() => {
       async session({ session, token }) {
         session.user.role = token.role as TRole;
         session.user.id = token.id as string;
-
-        if (token.refresh_token) {
-          session.refresh_token = token.refresh_token as string;
-        }
 
         return session;
       },

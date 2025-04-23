@@ -14,6 +14,7 @@ import {
   Tooltip,
   useDisclosure,
 } from "@heroui/react";
+import { uploadVideoAction } from "@repo/lib/actions";
 import { useForm } from "react-hook-form";
 import { FaPlus, FaUpload } from "react-icons/fa";
 import { TUserDetails } from "../page";
@@ -47,30 +48,23 @@ export default function ImportVideo({
       addToast({ color: "danger", description: "Unauthenticated" });
       return;
     }
-    const formdata = new FormData();
 
-    // Always required
-    formdata.append("videoFile", data.videoFile[0] as File);
-    formdata.append("importerId", userDetails.id as string);
-    formdata.append("ownerId", userDetails.id as string);
-
-    // Only append if not undefined/null
-    if (data.channelId) {
-      formdata.append("channelId", data.channelId);
+    if (!data.videoFile[0]) {
+      addToast({ color: "danger", description: "Video file is required" });
+      return;
     }
-    if (userDetails.channels.length === 1) {
-      formdata.append("channelId", userDetails.channels[0]?.id as string);
-    }
-    if (Array.isArray(data.editorsId) && data.editorsId.length > 0) {
-      formdata.append("editorsId", JSON.stringify(data.editorsId));
-    }
-
-    const res = await fetch("/api/video/import", {
-      method: "POST",
-      body: formdata,
+    const result = await uploadVideoAction({
+      videoDetails: {
+        ...data,
+        channelId:
+          userDetails.channels.length === 1
+            ? userDetails?.channels[0]?.id
+            : data.channelId,
+        importerId: userDetails.id,
+        ownerId: userDetails.id,
+        videoFile: data.videoFile[0],
+      },
     });
-    const result = await res.json();
-
     if (result.ok) {
       addToast({ color: "success", title: "Video Imported successfully!" });
       onClose();

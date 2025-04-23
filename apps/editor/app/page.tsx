@@ -2,8 +2,10 @@
 import { login } from "@/lib/authActions";
 import { getEditorVideos } from "@/lib/dbActions";
 import { addToast, Button, Skeleton } from "@heroui/react";
+import { TRole } from "@repo/lib/constants";
 import Header from "@repo/ui/header";
 import VideoCard from "@repo/ui/videoCard";
+import { VideoDropdown } from "@repo/ui/videoDropdown";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -27,16 +29,14 @@ export default function Home() {
         return;
       }
       const res = await getEditorVideos(data?.user.id);
-      console.log("res.result", res.result);
       if (res.ok) {
         setUserDetails(res.result);
+        return;
       }
-      if (!res.ok) {
-        addToast({
-          color: "danger",
-          description: "Failed to fetch videos.",
-        });
-      }
+      addToast({
+        color: "danger",
+        description: "Failed to fetch videos.",
+      });
     })();
   }, [data?.user.id, status]); // Added dependency
 
@@ -49,24 +49,40 @@ export default function Home() {
         <div className="video-cards-container grid p-4 gap-[24px_11px]">
           {true &&
             dummyVideos.map((video) => (
-              <Link
-                key={video.id}
-                href={`/videos/${video.id}`}
-                className="block"
-              >
-                <VideoCard video={video} />
-              </Link>
+              <div className="relative" key={video.id}>
+                <Link
+                  key={video.id}
+                  href={`/videos/${video.id}`}
+                  className="block"
+                >
+                  <VideoCard video={video} />
+                </Link>
+                <VideoDropdown
+                  title={video.title as string}
+                  videoId={video.id}
+                  className="[top:calc(72%_+_5px)] right-[5px] absolute"
+                  userRole={data?.user.role as TRole}
+                />
+              </div>
             ))}
 
           {userDetails &&
             userDetails.accessibleVideos.map(({ video }) => (
-              <Link
-                key={video.id}
-                href={`/videos/${video.id}`}
-                className="block"
-              >
-                <VideoCard video={video} />
-              </Link>
+              <div className="relative" key={video.id}>
+                <Link
+                  key={video.id}
+                  href={`/videos/${video.id}`}
+                  className="block"
+                >
+                  <VideoCard video={video} />
+                </Link>
+                <VideoDropdown
+                  title={video.title as string}
+                  videoId={video.id}
+                  className="[top:calc(72%_+_5px)] right-[5px] absolute"
+                  userRole={data?.user.role as TRole}
+                />
+              </div>
             ))}
 
           {!userDetails && (

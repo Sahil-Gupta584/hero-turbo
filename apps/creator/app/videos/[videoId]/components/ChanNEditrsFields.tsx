@@ -1,75 +1,28 @@
-import {
-  getCreatorChannels,
-  getCreatorEditors,
-  getVideoEditors,
-} from "@/lib/dbActions";
-import { addToast, Avatar, Checkbox, CheckboxGroup } from "@heroui/react";
-import { useEffect, useState } from "react";
-import {
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
-import { TVideoForm } from "../page";
+import { Avatar, Checkbox, CheckboxGroup } from "@heroui/react";
+import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { TVideoDetails } from "../page";
 import { ShowChannelsSkeleton } from "./VideoFormSkeleton";
 
 type UserChanNEditrsProps = {
-  register: UseFormRegister<TVideoForm>;
+  register: UseFormRegister<TVideoDetails>;
   isEditing: boolean;
-  creatorId: string;
-  videoId: string;
-  setValue: UseFormSetValue<TVideoForm>;
-  watch: UseFormWatch<TVideoForm>;
+  setValue: UseFormSetValue<TVideoDetails>;
+  previousData: TVideoDetails;
 };
-type TCreatorChannels = Awaited<
-  ReturnType<typeof getCreatorChannels>
->["result"];
-type TCreatorEditors = Awaited<ReturnType<typeof getCreatorEditors>>["result"];
 
 export default function ChanNEditrsFields({
   register,
-  creatorId,
   isEditing,
-  videoId,
-  watch,
   setValue,
+  previousData,
 }: UserChanNEditrsProps) {
-  const [userChannels, setUserChannels] = useState<TCreatorChannels>(null);
-  const [userEditors, setUserEditors] = useState<TCreatorEditors>(null);
-  const [selectedEditorsId, setSelectedEditorsId] = useState<
-    undefined | string[]
-  >();
+  const {
+    id: videoId,
+    ownerId: creatorId,
+    owner: { channels: userChannels, editors: userEditors },
+  } = previousData;
+  console.log("previousData.selectedEditorsId", previousData.selectedEditorsId);
 
-  const selectedChannelId = watch("channelId");
-  useEffect(() => {
-    (async () => {
-      const channelsRes = await getCreatorChannels({ creatorId });
-      const EditorsRes = await getCreatorEditors({ creatorId });
-      const videoEditorsRes = await getVideoEditors({ videoId });
-      if (!channelsRes.ok) {
-        addToast({
-          color: "danger",
-          description: "Failed to Fetch Channels.",
-        });
-      }
-      if (!EditorsRes.ok) {
-        addToast({
-          color: "danger",
-          description: "Failed to Fetch Editors.",
-        });
-      }
-      if (!videoEditorsRes.ok || !videoEditorsRes.result) {
-        addToast({
-          color: "danger",
-          description: "Failed to Fetch Selected Video Editors.",
-        });
-      }
-
-      setSelectedEditorsId(videoEditorsRes.result?.map((e) => e.editorId));
-      setUserChannels(channelsRes.result);
-      setUserEditors(EditorsRes.result);
-    })();
-  }, [creatorId, videoId]);
   return (
     <>
       {userChannels && userChannels.length > 0 ? (
@@ -77,8 +30,6 @@ export default function ChanNEditrsFields({
           <p className=" font-medium text-xl">For :</p>
           <div>
             {userChannels.map((channel) => {
-              if (channel.id === selectedChannelId) {
-              }
               return (
                 <label
                   key={channel.id}
@@ -87,8 +38,7 @@ export default function ChanNEditrsFields({
                   <Checkbox
                     type="radio"
                     value={channel.id}
-                    checked={selectedChannelId === channel.id}
-                    // onChange={() => setValue("channelId", channel.id)}
+                    checked={previousData.channelId === channel.id}
                     disabled={!isEditing}
                     {...register("channelId")}
                   />
@@ -111,13 +61,12 @@ export default function ChanNEditrsFields({
         <div className="space-y-2">
           <p className=" font-medium text-xl">Can be accessed by:</p>
           <CheckboxGroup
-            value={selectedEditorsId}
             onValueChange={(val) => {
-              setSelectedEditorsId(val);
               setValue("selectedEditorsId", val);
             }}
             isDisabled={!isEditing}
             orientation="horizontal"
+            defaultValue={previousData.selectedEditorsId}
           >
             {userEditors.map(({ editor }) => (
               <Checkbox key={editor.id} value={editor.id}>

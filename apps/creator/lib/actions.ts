@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@repo/db";
-import { google } from "googleapis";
+import { getGoogleServices } from "@repo/lib/actions";
 import moment from "moment";
 import { User } from "next-auth";
 import nodemailer from "nodemailer";
@@ -15,6 +15,12 @@ export async function getVideoDetails(videoId: string) {
       where: {
         id: videoId,
       },
+      include: {
+        owner: {
+          include: { channels: true, editors: { include: { editor: true } } },
+        },
+        editors: { include: { editor: true } },
+      },
     });
     if (!video) throw new Error("Video not found");
 
@@ -27,56 +33,19 @@ export async function getVideoDetails(videoId: string) {
     return backendRes({ ok: false, error: error as Error, result: null });
   }
 }
-export async function getVideoLink(gDriveId: string) {
+
+export async function getPlaylists(channelId: string) {
   try {
-    const auth = new google.auth.OAuth2(
-      process.env.YOUTUBE_CLIENT_ID,
-      process.env.YOUTUBE_CLIENT_SECRET,
-      process.env.YOUTUBE_REDIRECT_URI
-    );
-    auth.setCredentials({ refresh_token: process.env.YOUTUBE_REFRESH_TOKEN });
-
-    const drive = google.drive({ version: "v3", auth });
-
-    const file = await drive.files.get({
-      fileId: gDriveId,
-      fields: "webViewLink",
-    });
-
-    if (!file.data.webViewLink) {
-      throw new Error("Video not found");
+    const { result, error } = await getGoogleServices(channelId);
+    if (!result) {
+      throw new Error("Failed to get Google services: " + error?.message);
     }
-
-    return backendRes({
-      ok: true,
-      result: {
-        videoLink: file.data.webViewLink.replace(
-          "view?usp=drivesdk",
-          "preview"
-        ),
-      },
-    });
-  } catch (error) {
-    console.error("Error in getVideoLink:", error);
-    return backendRes({ ok: false, error: error as Error, result: null });
-  }
-}
-
-export async function getPlaylists() {
-  try {
-    const auth = new google.auth.OAuth2(
-      process.env.YOUTUBE_CLIENT_ID,
-      process.env.YOUTUBE_CLIENT_SECRET,
-      process.env.YOUTUBE_REDIRECT_URI
-    );
-    auth.setCredentials({ refresh_token: process.env.YOUTUBE_REFRESH_TOKEN });
-
-    const youtube = google.youtube({ version: "v3", auth });
+    const { youtube } = result;
 
     const res = await youtube.playlists.list({
       // fileId: gDriveId,
       part: ["snippet"],
-      channelId: "UCZsNBvo4uxh6GdA7Y-ERqOw",
+      channelId,
     });
 
     // console.log("res", res.data);

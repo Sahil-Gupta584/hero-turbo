@@ -1,5 +1,4 @@
 export type TPrivacyStatus = "Private" | "Public" | "Unlisted";
-export type TRole = "CREATOR" | "EDITOR";
 export type TPlan = "FREE" | "PRO" | "BUSINESS";
 
 export const channelAccessScopes = [
@@ -17,8 +16,6 @@ export const thumbnailFileTypes = [
   "image/png",
   " application/octet-stream",
 ];
-export const defaultVideoTitle = "Untitled  Video ";
-export const defaultVideoDesc = "No description added.";
 export const privacyStatus = [
   {
     title: "Private",

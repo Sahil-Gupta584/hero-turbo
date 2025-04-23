@@ -107,7 +107,10 @@ export default function DrawerComponent({ session }: { session: Session }) {
                     <div className="flex gap-4 items-center flex-wrap p-4">
                       {userDetails &&
                         userDetails.editors.map(({ editor }) => (
-                          <div className="flex justify-between items-center w-full">
+                          <div
+                            className="flex justify-between items-center w-full"
+                            key={editor.id}
+                          >
                             <div
                               className="flex gap-4 items-center pl-10"
                               key={editor.id}
@@ -126,7 +129,10 @@ export default function DrawerComponent({ session }: { session: Session }) {
                                 </p>
                               </ul>
                             </div>
-                            <DeleteEditor editor={editor} creatorId={session.user.id} />
+                            <DeleteEditor
+                              editor={editor}
+                              creatorId={session.user.id}
+                            />
                           </div>
                         ))}
                     </div>
@@ -155,7 +161,6 @@ export default function DrawerComponent({ session }: { session: Session }) {
                     <div className="flex gap-4 items-center flex-wrap p-4">
                       {userDetails &&
                         userDetails.channels.map((channel) => (
-                          <>
                             <Link
                               href={`https://www.youtube.com/channel/${channel.ytChannelId}`}
                               className="flex gap-4 items-center pl-10"
@@ -170,8 +175,6 @@ export default function DrawerComponent({ session }: { session: Session }) {
                                 {channel?.name}
                               </span>
                             </Link>
-                            {/* <p className="text-sm text-gray-500">{channel?.email}</p> */}
-                          </>
                         ))}
                     </div>
                   </AccordionItem>

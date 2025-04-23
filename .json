@@ -1,0 +1,105 @@
+{
+    "id": "0f41baee-b4e6-4a8b-a806-ebdf44a82103",
+    "gDriveId": "1RDoyCbTA3ABq4xQepJn6Dyz_ZvMg8iQy",
+    "title": "Untitled  Video ",
+    "description": "No description added.",
+    "thumbnailUrl": null,
+    "scheduledAt": null,
+    "videoStatus": "DRAFT",
+    "privacyStatus": "Private",
+    "playlistIds": [],
+    "tags": "",
+    "categoryId": "22",
+    "ownerId": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+    "importedById": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+    "channelId": "bc64b004-262c-4220-8203-2f0fbaefc354",
+    "createdAt": "1745379740",
+    "owner": {
+        "id": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+        "email": "guptas3067@gmail.com",
+        "name": "Sahil Gupta",
+        "image": "https://lh3.googleusercontent.com/a/ACg8ocJOxCAFsa60LevnhcsY5rzDNX6G1UZpMsXN5OfJS60cu_JKJQ=s96-c",
+        "emailVerified": null,
+        "role": "CREATOR",
+        "plan": null,
+        "createdAt": "2025-04-19T10:37:23.367Z",
+        "updatedAt": "2025-04-19T10:37:23.367Z",
+        "channels": [
+            {
+                "id": "bc64b004-262c-4220-8203-2f0fbaefc354",
+                "userId": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+                "name": "Sahil Gupta",
+                "ytChannelId": "UCZsNBvo4uxh6GdA7Y-ERqOw",
+                "logoUrl": "https://yt3.ggpht.com/HCIMmVd1A2G89Kps9G2sGS5YKK4Xsa5sHO-XR-leSz78wJ2drLoKutFvwfBpkoGWkWsq2Y6Urg=s240-c-k-c0x00ffffff-no-rj",
+                "description": "",
+                "refresh_token": "1//0gNh12_QfX9TiCgYIARAAGBASNwF-L9IrnZupj_MCYpflHtnwLzCkyIWKbtf6xT0YkMcK1PT0RwhJNhWJgO0vfCxjgyT9CkHsrIc",
+                "access_token": "ya29.a0AZYkNZgnG5qllZzxGBYl7H8gdBvF1KhALACsNDGRh9sD7wjwtE541_QfVlmJWTY0DWaM2bf82EE5L-Cd-ZO9ZBBZbyPnoNoPp3hN3ZbySMeUWBYulbOUlC9WYnpwk8dnuyKB721rjg3XNWzROpz6KdPh9oQAH4iyXy5XaCm3aCgYKAQgSARcSFQHGX2MizNB7dGdCXHI4FJIlT2AzHw0175"
+            }
+        ],
+        "editors": [
+            {
+                "creatorId": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+                "editorId": "0815b4b6-fe1d-4736-bb98-57f6d65e99ee",
+                "assignedAt": "2025-04-22T14:15:02.796Z"
+            }
+        ]
+    },
+    "editors": []
+}
+
+{
+    "id": "0f41baee-b4e6-4a8b-a806-ebdf44a82103",
+    "gDriveId": "1RDoyCbTA3ABq4xQepJn6Dyz_ZvMg8iQy",
+    "title": "Untitled  Video ",
+    "description": "No description added.",
+    "thumbnailUrl": null,
+    "scheduledAt": null,
+    "videoStatus": "DRAFT",
+    "privacyStatus": "Private",
+    "playlistIds": [
+        ""
+    ],
+    "tags": "",
+    "categoryId": "22",
+    "ownerId": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+    "importedById": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+    "channelId": "bc64b004-262c-4220-8203-2f0fbaefc354",
+    "createdAt": "1745379740",
+    "owner": {
+        "id": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+        "email": "guptas3067@gmail.com",
+        "name": "Sahil Gupta",
+        "image": "https://lh3.googleusercontent.com/a/ACg8ocJOxCAFsa60LevnhcsY5rzDNX6G1UZpMsXN5OfJS60cu_JKJQ=s96-c",
+        "emailVerified": null,
+        "role": "CREATOR",
+        "plan": null,
+        "createdAt": "2025-04-19T10:37:23.367Z",
+        "updatedAt": "2025-04-19T10:37:23.367Z",
+        "channels": [
+            {
+                "id": "bc64b004-262c-4220-8203-2f0fbaefc354",
+                "userId": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+                "name": "Sahil Gupta",
+                "ytChannelId": "UCZsNBvo4uxh6GdA7Y-ERqOw",
+                "logoUrl": "https://yt3.ggpht.com/HCIMmVd1A2G89Kps9G2sGS5YKK4Xsa5sHO-XR-leSz78wJ2drLoKutFvwfBpkoGWkWsq2Y6Urg=s240-c-k-c0x00ffffff-no-rj",
+                "description": "",
+                "refresh_token": "1//0gNh12_QfX9TiCgYIARAAGBASNwF-L9IrnZupj_MCYpflHtnwLzCkyIWKbtf6xT0YkMcK1PT0RwhJNhWJgO0vfCxjgyT9CkHsrIc",
+                "access_token": "ya29.a0AZYkNZgnG5qllZzxGBYl7H8gdBvF1KhALACsNDGRh9sD7wjwtE541_QfVlmJWTY0DWaM2bf82EE5L-Cd-ZO9ZBBZbyPnoNoPp3hN3ZbySMeUWBYulbOUlC9WYnpwk8dnuyKB721rjg3XNWzROpz6KdPh9oQAH4iyXy5XaCm3aCgYKAQgSARcSFQHGX2MizNB7dGdCXHI4FJIlT2AzHw0175"
+            }
+        ],
+        "editors": [
+            {
+                "creatorId": "b2bd0e2a-2b1e-4ee7-a5ef-0b3cb731555d",
+                "editorId": "0815b4b6-fe1d-4736-bb98-57f6d65e99ee",
+                "assignedAt": "2025-04-22T14:15:02.796Z"
+            }
+        ]
+    },
+    "editors": [
+        {
+            "videoId": "0f41baee-b4e6-4a8b-a806-ebdf44a82103",
+            "editorId": "0815b4b6-fe1d-4736-bb98-57f6d65e99ee",
+            "assignedAt": "2025-04-23T06:22:51.638Z"
+        }
+    ]
+}

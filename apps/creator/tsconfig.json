@@ -7,19 +7,19 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
     "next.config.js",
-    ".next/types/**/*.ts"
-, "../../packages/ui/src/header.tsx", "../../packages/ui/src/tag.tsx", "../../packages/ui/src/videoCard.tsx"  ],
-  "exclude": [
-    "node_modules"
-  ]
+    ".next/types/**/*.ts",
+    "../../packages/ui/src/header.tsx",
+    "../../packages/ui/src/tag.tsx",
+    "../../packages/ui/src/videoCard.tsx",
+    "../../packages/ui/src/videoComponent.tsx"
+  ],
+  "exclude": ["node_modules"]
 }
