@@ -28,7 +28,7 @@ export default function ChanNEditrsFields({
       {userChannels && userChannels.length > 0 ? (
         <div className="space-y-2">
           <p className=" font-medium text-xl">For :</p>
-          <div>
+          <div className="flex flex-wrap gap-[35px">
             {userChannels.map((channel) => {
               return (
                 <label
@@ -67,6 +67,7 @@ export default function ChanNEditrsFields({
             isDisabled={!isEditing}
             orientation="horizontal"
             defaultValue={previousData.selectedEditorsId}
+            className="gap-[35px]"
           >
             {userEditors.map(({ editor }) => (
               <Checkbox key={editor.id} value={editor.id}>
@@ -76,7 +77,7 @@ export default function ChanNEditrsFields({
                     className="w-12 h-12 ml-3"
                     fallback
                   />
-                  <span className="mt-1 text-black">{editor.name}</span>
+                  <span className="mt-1 ">{editor.name}</span>
                 </div>
               </Checkbox>
             ))}

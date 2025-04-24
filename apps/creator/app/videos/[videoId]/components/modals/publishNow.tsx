@@ -47,7 +47,7 @@ export default function PublishNow({ isSubmitting, isEditing, videoId }: { isSub
         <>
             <Button
                 isLoading={isSubmitting}
-                className="grow tracking-[1px] bg-black text-white font-semibold text-[16px] p-6"
+                className="grow tracking-[1px] bg-black text-white dark:bg-white dark:text-black font-semibold text-[16px] p-6"
                 startContent={<MdOutlineFileUpload />}
                 onPress={onOpen}
                 type="submit"

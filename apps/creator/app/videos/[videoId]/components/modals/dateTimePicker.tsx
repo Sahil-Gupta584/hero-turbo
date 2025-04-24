@@ -11,7 +11,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import moment from "moment";
-import { useForm, UseFormRegister, UseFormWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { MdSchedule } from "react-icons/md";
 import { TVideoDetails } from "../../page";
 
@@ -57,7 +57,7 @@ export function DateTimePicker({ isEditing, videoDetails, }: TDateTimePicker) {
     <>
       <Button
         onPress={onOpen}
-        className="grow tracking-[1px] bg-black text-white font-semibold text-[16px] p-6 sm:max-w-[56%] "
+        className="grow tracking-[1px] bg-black text-white dark:bg-white dark:text-black font-semibold text-[16px] p-6 sm:max-w-[56%] "
         startContent={<MdSchedule className="mb-1" />}
         isDisabled={isEditing || isSubmitting}
       >

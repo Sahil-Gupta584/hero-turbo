@@ -63,10 +63,6 @@ export default function ImportVideo({
       title: "Video Imported Successfully!",
     });
     onClose();
-    await updateThumbnails({
-      ownerId: data.creatorId,
-      videos: [{ gDriveId: res.result.gDriveId, videoId: res.result.id }],
-    });
   };
 
   return (
@@ -100,7 +96,7 @@ export default function ImportVideo({
                   />
                 </label>
                 {videoFile?.[0] && (
-                  <p className="text-center text-sm text-gray-700">
+                  <p className="text-center text-sm text-gray-700 dark:text-gray-300">
                     Selected file: {videoFile[0].name}
                   </p>
                 )}

@@ -192,7 +192,10 @@ export async function uploadVideoAction({
         });
       }
     }
-
+    await updateThumbnails({
+      ownerId:videoDetails.ownerId,
+      videos: [{ gDriveId: uploadedFileData.data.id, videoId: video.id }],
+    });
     return backendRes({
       ok: true,
       result: video,
