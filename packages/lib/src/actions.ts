@@ -3,7 +3,7 @@ import { prisma } from "@repo/db";
 import { google } from "googleapis";
 import { Readable } from "nodemailer/lib/xoauth2";
 import { defaultVideoDesc, defaultVideoTitle } from "./constants";
-import { backendRes } from "./utils";
+import { backendRes, TUpdateThumbnailsProps } from "./utils";
 
 export async function getGoogleServices(userId: string) {
   try {
@@ -139,7 +139,7 @@ export async function uploadVideoAction({
     const { drive } = result;
     const folderId = await getOrCreateFolder(drive, "Syncly");
 
-    const { gDriveId, videoId } = await prisma.$transaction(async (tx) => {
+    const { gDriveId, video } = await prisma.$transaction(async (tx) => {
       const buffer = await videoFile.arrayBuffer();
       const stream = bufferToStream(buffer);
 
@@ -173,13 +173,13 @@ export async function uploadVideoAction({
           thumbnailUrl: uploadedFileData.data.thumbnailLink,
         },
       });
-      return { videoId: video.id, gDriveId: uploadedFileData.data.id };
+      return { video, gDriveId: uploadedFileData.data.id };
     });
 
     if (editors) {
       for (const { email, id } of editors) {
         await prisma.videoEditor.create({
-          data: { videoId: videoId, editorId: id },
+          data: { videoId: video.id, editorId: id },
         });
 
         await drive.permissions.create({
@@ -193,10 +193,17 @@ export async function uploadVideoAction({
       }
     }
 
-    return { ok: true, message: "Upload complete" };
+    return backendRes({
+      ok: true,
+      result: video,
+    });
   } catch (error: any) {
     console.error("Error from uploadVideoAction:", error);
-    return { ok: false, error: error.message ?? "Something went wrong" };
+    return backendRes({
+      ok: false,
+      error: error as Error,
+      result: null,
+    });
   }
 }
 
@@ -231,3 +238,35 @@ function bufferToStream(buffer: ArrayBuffer): Readable {
   return readable;
 }
 
+export async function updateThumbnails({
+  videos,
+  ownerId,
+}: TUpdateThumbnailsProps) {
+  try {
+    console.log("runing updateThumbnails");
+
+    const res = await fetch(
+      `${process.env.CREATOR_BASE_URL}/api/update-thumbnails`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ videos, ownerId }),
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to update thumbnails ");
+    }
+    const data = await res.json();
+    console.log("data", data);
+
+    return backendRes({
+      ok: true,
+      result: data.result as TUpdateThumbnailsProps,
+    });
+  } catch (error) {
+    console.error("Error in updateThumbnails:", error);
+    return backendRes({ ok: false, error: error as Error, result: null });
+  }
+}

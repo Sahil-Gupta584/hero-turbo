@@ -11,14 +11,13 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Tooltip,
   useDisclosure,
 } from "@heroui/react";
-import { uploadVideoAction } from "@repo/lib/actions";
-import { useForm } from "react-hook-form";
-import { FaPlus, FaUpload } from "react-icons/fa";
-import { TUserDetails } from "../page";
+import { updateThumbnails, uploadVideoAction } from "@repo/lib/actions";
 import ImportButton from "@repo/ui/importButton";
+import { useForm } from "react-hook-form";
+import { FaUpload } from "react-icons/fa";
+import { TUserDetails } from "../page";
 type TImportVideo = {
   videoFile: FileList;
   channelId?: string;
@@ -65,17 +64,21 @@ export default function ImportVideo({
         videoFile: data.videoFile[0],
       },
     });
-    if (result.ok) {
-      addToast({ color: "success", title: "Video Imported successfully!" });
-      onClose();
-    } else {
+    if (!result.ok || !result.result) {
       addToast({ color: "danger", title: "Failed to import video!" });
+      return;
     }
+    addToast({ color: "success", title: "Video Imported successfully!" });
+    onClose();
+    await updateThumbnails({
+      ownerId: userDetails.id,
+      videos: [{ gDriveId: result.result.gDriveId, videoId: result.result.id }],
+    });
   };
 
   return (
     <>
-     <ImportButton onPress={onOpen} />
+      <ImportButton onPress={onOpen} />
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>

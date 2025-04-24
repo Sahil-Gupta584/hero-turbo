@@ -2,20 +2,18 @@
 import { login } from "@/lib/authActions";
 import { getCreatorDetails } from "@/lib/dbActions";
 import { addToast, Button, Skeleton } from "@heroui/react";
-import Header from "@repo/ui/header";
+import { TRole } from "@repo/lib/constants";
 import VideoCard from "@repo/ui/videoCard";
 import { VideoDropdown } from "@repo/ui/videoDropdown";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import DrawerComponent from "./components/drawer";
 import { dummyVideos } from "./constants";
 import ImportVideo from "./modals/importVideo";
-import { TRole } from "@repo/lib/constants";
 
-export type TUserDetails = Awaited<
+export type TUserDetails = NonNullable<Awaited<
   ReturnType<typeof getCreatorDetails>
->["result"];
+>>["result"];
 
 export default function Home() {
   const [userDetails, setUserDetails] = useState<TUserDetails>(null);
@@ -29,15 +27,17 @@ export default function Home() {
         return;
       }
       const res = await getCreatorDetails({ userId: data.user.id });
-      console.log("res.result", res.result);
-      if (res.ok) {
-        setUserDetails(res.result);
-      }
-      if (!res.ok) {
+
+      if (res && !res.ok) {
         addToast({
           color: "danger",
           description: "Failed to fetch videos.",
         });
+        return
+      }
+      console.log("res.result", res.result);
+      if (res.ok) {
+        setUserDetails(res.result);
       }
     })();
   }, [data?.user.id, status]); // Added dependency
@@ -84,7 +84,6 @@ export default function Home() {
                   userRole={data?.user.role as TRole}
                   className="[top:calc(72%_+_5px)] right-[5px] absolute"
                   ownerId={video.ownerId}
-
                 />
               </div>
             ))}

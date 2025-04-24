@@ -17,6 +17,10 @@ export const backendRes = <T = undefined>({
 };
 
 export type TUpdateThumbnailsProps = {
-  videos:{videoId:string;gDriveId:string}[];
-  ownerId:string
-}
+  videos: {
+    thumbnailLink?: string;
+    videoId: string;
+    gDriveId: string;
+  }[];
+  ownerId: string;
+};

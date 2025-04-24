@@ -2,7 +2,7 @@
 
 import { TVideoDetails } from "@/app/videos/[videoId]/page";
 import { prisma } from "@repo/db";
-import { getGoogleServices } from "@repo/lib/actions";
+import { getGoogleServices, updateThumbnails } from "@repo/lib/actions";
 import { backendRes } from "@repo/lib/utils";
 import { google } from "googleapis";
 
@@ -117,11 +117,7 @@ export async function addChannel({
 export async function getCreatorDetails({ userId }: { userId: string }) {
   try {
     if (!userId) {
-      return backendRes({
-        ok: false,
-        error: new Error("userId is required"),
-        result: null,
-      });
+      throw new Error("userId is required");
     }
     const res = await prisma.user.findUnique({
       where: {
@@ -143,28 +139,22 @@ export async function getCreatorDetails({ userId }: { userId: string }) {
       }
 
       if (videosWithoutThumbnail.length > 0) {
-        const { result } = await getGoogleServices(userId); // or ownerId if needed
-        if (!result) throw new Error("Failed to get Google services");
-        const { drive } = result;
-
-        for (const video of videosWithoutThumbnail) {
-          const file = await drive.files.get({
-            fileId: video.gDriveId,
-            fields: "thumbnailLink",
-          });
-
-          const updateVideo = await prisma.video.update({
-            where: { id: video.id },
-            data: {
-              thumbnailUrl: file.data.thumbnailLink,
-            },
-          });
-
-          const videoIndex = res.ownedVideos.findIndex(
-            (v) => v.id === video.id
-          );
-          if (videoIndex !== -1 && res.ownedVideos[videoIndex] ) {
-            res.ownedVideos[videoIndex].thumbnailUrl =file.data.thumbnailLink as string;
+        const updatedVideoRes = await updateThumbnails({
+          videos: videosWithoutThumbnail.map((v) => ({
+            gDriveId: v.gDriveId,
+            videoId: v.id,
+          })),
+          ownerId: userId,
+        });
+        if (updatedVideoRes.result) {
+          for (const video of updatedVideoRes.result.videos) {
+            const videoIndex = res.ownedVideos.findIndex(
+              (v) => v.id === video.videoId
+            );
+            if (videoIndex !== -1 && res.ownedVideos[videoIndex]) {
+              res.ownedVideos[videoIndex].thumbnailUrl =
+                video.thumbnailLink as string;
+            }
           }
         }
       }
