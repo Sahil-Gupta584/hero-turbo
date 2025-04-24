@@ -42,6 +42,7 @@ export default function Page({ params }: Props) {
 
   useEffect(() => {
     (async () => {
+      
       const details = await getVideoDetails(videoId);
       if (details.ok && details.result) {
         console.log("details", details.result);
@@ -167,7 +168,7 @@ export function VideoPage({
     }
 
     console.log(" formDataRaw:", formDataRaw);
-
+    
     const playlistIds = `${formDataRaw.playlistIds}`;
     const res = await updateVideoDetails({
       ...formDataRaw,

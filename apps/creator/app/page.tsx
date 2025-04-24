@@ -44,7 +44,6 @@ export default function Home() {
 
   return (
     <>
-      <Header session={data} DrawerComponent={DrawerComponent} />
       <div className="main">
         <Button onPress={() => login()}>Get Started </Button>
 

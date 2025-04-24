@@ -17,7 +17,7 @@ import { uploadVideoAction } from "@repo/lib/actions";
 import { useForm } from "react-hook-form";
 import { FaPlus, FaUpload } from "react-icons/fa";
 import { TUserDetails } from "../page";
-
+import ImportButton from "@repo/ui/importButton";
 type TImportVideo = {
   videoFile: FileList;
   creatorId: string;
@@ -69,15 +69,7 @@ export default function ImportVideo({
 
   return (
     <>
-      <Tooltip content="Import New Video" className="bg-black text-white">
-        <Button
-          radius="full"
-          className="p-[38px_27px] fixed bottom-10 right-5 bg-black text-white"
-          onPress={onOpen}
-        >
-          <FaPlus className="text-xl " />
-        </Button>
-      </Tooltip>
+           <ImportButton onPress={onOpen} />
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>

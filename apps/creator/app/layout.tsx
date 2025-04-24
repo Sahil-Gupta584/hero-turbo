@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "./providers";
+import Header from "@repo/ui/header";
+import DrawerComponent from "./components/drawer";
 
 
 export const metadata: Metadata = {
@@ -27,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${calFont.variable}  antialiased mx-auto min-h-screen max-w-7xl px-4 pb-24 md:px-8`}
       >
+        
         <Providers>
+                <Header DrawerComponent={DrawerComponent} />
               {children}
         </Providers>
       </body>

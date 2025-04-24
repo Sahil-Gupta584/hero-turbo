@@ -7,7 +7,10 @@
   --font-cal: "CalSans", sans-serif;
   --base-secondary: #59545196;
 }
-
+.dark {
+  --background: #1e1e1e;
+  --foreground: #ffffff;
+}
 body {
   font-family: var(--font-cal);
   font-weight: 400;

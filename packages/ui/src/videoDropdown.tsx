@@ -62,15 +62,15 @@ export function VideoDropdown({
   return (
     <>
       <div className={className}>
-        <Dropdown closeOnSelect={false}>
+        <Dropdown closeOnSelect={false} classNames={{content:['dark:bg-[#4d4d4d] ']}}>
           <DropdownTrigger>
             <button
-              className="p-1 rounded-full hover:bg-gray-100 rotate-90 self-end mb-2"
+              className="p-1 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 rotate-90 self-end mb-2 transition"
               onClick={(e) => e.stopPropagation()}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-600 "
+                className="h-5 w-5 text-gray-600   dark:text-white"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -80,7 +80,7 @@ export function VideoDropdown({
               </svg>
             </button>
           </DropdownTrigger>
-          <DropdownMenu aria-label="Static Actions">
+          <DropdownMenu aria-label="Static Actions" >
             <DropdownItem
               key="download"
               className="text-lg"
@@ -88,7 +88,7 @@ export function VideoDropdown({
               startContent={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6 text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                  className="w-6 h-6 text-gray-700 hover:text-blue-600 transition-colors duration-200  dark:text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

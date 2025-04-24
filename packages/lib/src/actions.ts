@@ -37,7 +37,7 @@ export async function getGoogleServices(userId: string) {
   }
 }
 
-export async function getVideoLink(videoId: string, ownerId: string) {
+export async function getVideoLink(videoId: string) {
   try {
     const video = await prisma.video.findUnique({
       where: {
@@ -230,3 +230,4 @@ function bufferToStream(buffer: ArrayBuffer): Readable {
   readable.push(null); // End the stream
   return readable;
 }
+

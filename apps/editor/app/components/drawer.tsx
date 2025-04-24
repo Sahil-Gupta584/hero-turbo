@@ -1,3 +1,4 @@
+'use client'
 import { getEditorCreators } from "@/lib/dbActions";
 import {
   Drawer,
@@ -9,7 +10,7 @@ import {
 import { addToast, Avatar, Button, useDisclosure } from "@heroui/react";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
-
+import ThemeSwitch from '@repo/ui/themeSwitch';
 type TCreators = NonNullable<
   Awaited<ReturnType<typeof getEditorCreators>>["result"]
 >["creators"];
@@ -36,7 +37,7 @@ export default function DrawerComponent({ session }: { session: Session }) {
     <>
       <Button
         onPress={onOpen}
-        className="flex items-center justify-center gap-2 bg-transparent hover:bg-gray-300 transition px-2 py-1 rounded-md"
+        className="flex items-center justify-end sm:justify-center px-0 sm:px-2 gap-2 bg-transparent hover:bg-gray-300 transition py-1 rounded-md min-w-fit "
       >
         <Avatar
           className="md:h-7 md:w-7 "
@@ -49,7 +50,7 @@ export default function DrawerComponent({ session }: { session: Session }) {
       </Button>
 
       <Drawer
-        className=" h-screen max-w-5xl left-0 bg-white "
+        className=" h-screen max-w-5xl left-0  "
         placement="left"
         isOpen={isOpen}
         onClose={onClose}
@@ -57,8 +58,9 @@ export default function DrawerComponent({ session }: { session: Session }) {
         <DrawerContent>
           {(onClose) => (
             <>
-              <DrawerHeader className="flex items-center justify-between text-2xl">
+              <DrawerHeader className="flex items-center justify-between text-2xl pr-10">
                 Joined Creators
+                <ThemeSwitch/>
               </DrawerHeader>
               <DrawerBody>
                   {creators && creators.length === 0 && (

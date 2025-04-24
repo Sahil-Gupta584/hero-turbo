@@ -1,14 +1,16 @@
+'use client';
 import { Skeleton } from "@heroui/react";
 import { Session } from "next-auth";
-import Link from "next/link";
+import { useSession } from "next-auth/react";
 
-export default function Header({ session,DrawerComponent }: { session: Session | null,DrawerComponent:React.FC<{ session: Session}> }) {
+export default function Header({ DrawerComponent }: { DrawerComponent:React.FC<{ session: Session}> }) {
+  const { data } = useSession();
   return (
     <>
       <nav className="flex items-center justify-between p-2 md:text-2xl px-4 py-2 text-xl">
-        <Link href={"/"}>Syncly</Link>
-        {session?.user.id ? (
-          <DrawerComponent session={session} />
+        <a href={"/"}>Syncly</a>
+        {(data && data.user?.id) ? (
+          <DrawerComponent session={data} />
         ) : (
           <Skeleton className="h-8 w-24 rounded-md" />
         )}

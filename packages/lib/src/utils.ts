@@ -15,3 +15,8 @@ export const backendRes = <T = undefined>({
     result,
   };
 };
+
+export type TUpdateThumbnailsProps = {
+  videos:{videoId:string;gDriveId:string}[];
+  ownerId:string
+}

@@ -5,7 +5,7 @@ import { getGoogleServices } from "@repo/lib/actions";
 import moment from "moment";
 import { User } from "next-auth";
 import nodemailer from "nodemailer";
-import { backendRes } from "./utils";
+import { backendRes } from "@repo/lib/utils";
 
 export async function getVideoDetails(videoId: string) {
   try {
@@ -43,7 +43,6 @@ export async function getPlaylists(channelId: string) {
     const { youtube } = result;
 
     const res = await youtube.playlists.list({
-      // fileId: gDriveId,
       part: ["snippet"],
       channelId,
     });

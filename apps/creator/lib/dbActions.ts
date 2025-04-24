@@ -3,13 +3,8 @@
 import { TVideoDetails } from "@/app/videos/[videoId]/page";
 import { prisma } from "@repo/db";
 import { getGoogleServices } from "@repo/lib/actions";
-import { defaultVideoDesc, defaultVideoTitle } from "@repo/lib/constants";
 import { backendRes } from "@repo/lib/utils";
-import console from "console";
 import { google } from "googleapis";
-import moment from "moment";
-import { revalidatePath } from "next/cache";
-import { Readable } from "stream";
 
 export async function getUserVideos(userId: string) {
   try {
@@ -49,7 +44,7 @@ export async function getUserWithEditors({ userId }: { userId: string }) {
     });
     return backendRes({ ok: true, result: res });
   } catch (error) {
-    console.log("error from getCreatorDetails", error);
+    console.log("error from getUserWithEditors", error);
     return backendRes({ ok: false, error: error as Error, result: null });
   }
 }
@@ -62,7 +57,6 @@ export async function addChannel({
   userId: string;
 }) {
   try {
-
     const oauth2Client = new google.auth.OAuth2(
       process.env.YOUTUBE_CLIENT_ID,
       process.env.YOUTUBE_CLIENT_SECRET,
@@ -139,6 +133,43 @@ export async function getCreatorDetails({ userId }: { userId: string }) {
         channels: true,
       },
     });
+
+    const videosWithoutThumbnail = [];
+    if (res) {
+      for (const video of res.ownedVideos) {
+        if (!video.thumbnailUrl) {
+          videosWithoutThumbnail.push(video);
+        }
+      }
+
+      if (videosWithoutThumbnail.length > 0) {
+        const { result } = await getGoogleServices(userId); // or ownerId if needed
+        if (!result) throw new Error("Failed to get Google services");
+        const { drive } = result;
+
+        for (const video of videosWithoutThumbnail) {
+          const file = await drive.files.get({
+            fileId: video.gDriveId,
+            fields: "thumbnailLink",
+          });
+
+          const updateVideo = await prisma.video.update({
+            where: { id: video.id },
+            data: {
+              thumbnailUrl: file.data.thumbnailLink,
+            },
+          });
+
+          const videoIndex = res.ownedVideos.findIndex(
+            (v) => v.id === video.id
+          );
+          if (videoIndex !== -1 && res.ownedVideos[videoIndex] ) {
+            res.ownedVideos[videoIndex].thumbnailUrl =file.data.thumbnailLink as string;
+          }
+        }
+      }
+    }
+
     return backendRes({ ok: true, result: res });
   } catch (error) {
     console.log("error from getCreatorDetails", error);
@@ -215,10 +246,6 @@ export async function getVideoEditors({ videoId }: { videoId: string }) {
   }
 }
 
-
-
-
-
 export async function updateVideoDetails(videoDetails: TVideoDetails) {
   try {
     console.log("videoDetails", videoDetails);
@@ -234,6 +261,7 @@ export async function updateVideoDetails(videoDetails: TVideoDetails) {
       description,
       gDriveId,
       editors,
+      channelId,
     } = videoDetails;
     const res = await prisma.$transaction(async (tx) => {
       const updatedVideo = await tx.video.update({
@@ -246,9 +274,11 @@ export async function updateVideoDetails(videoDetails: TVideoDetails) {
           tags: tags,
           title: title,
           scheduledAt: scheduledAt,
+          channelId,
         },
         include: { owner: true },
       });
+      console.log("updatedVideo", updatedVideo);
       const existingEditorIds = editors.map((e) => e.editorId);
 
       const toAdd = selectedEditorsId.filter(
@@ -318,7 +348,7 @@ async function updateGoogleDrivePermissions({
   const toRevoke = existingEmails.filter(
     (email) => !selectedEditorEmails.includes(email as string)
   );
-
+  console.log("toGrant", toGrant);
   await Promise.all(
     toGrant.map((email) =>
       drive.permissions.create({

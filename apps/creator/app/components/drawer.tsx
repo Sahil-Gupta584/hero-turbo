@@ -1,3 +1,5 @@
+'use client';
+import ThemeSwitch from '@repo/ui/themeSwitch';
 import { getGoogleAuthUrl } from "@/lib/authActions";
 import { getUserWithEditors } from "@/lib/dbActions";
 import {
@@ -5,6 +7,7 @@ import {
   DrawerBody,
   DrawerContent,
   DrawerFooter,
+  DrawerHeader
 } from "@heroui/drawer";
 import {
   Accordion,
@@ -45,7 +48,6 @@ export default function DrawerComponent({ session }: { session: Session }) {
       const authUrl = await getGoogleAuthUrl();
       console.log("authUrl", authUrl);
 
-      // ✅ Open in a new tab
       window.open(authUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
       console.log("Error adding channel:", error);
@@ -60,7 +62,7 @@ export default function DrawerComponent({ session }: { session: Session }) {
     <>
       <Button
         onPress={onOpen}
-        className="flex items-center justify-center gap-2 bg-transparent hover:bg-gray-300 transition px-2 py-1 rounded-md"
+        className="flex items-center justify-end sm:justify-center px-0 sm:px-2 gap-2 bg-transparent hover:bg-gray-300 transition  py-1 rounded-md min-w-fit"
       >
         <Avatar
           className="md:h-7 md:w-7 "
@@ -73,7 +75,7 @@ export default function DrawerComponent({ session }: { session: Session }) {
       </Button>
 
       <Drawer
-        className=" h-screen max-w-5xl left-0 bg-white "
+        className=" h-screen max-w-5xl left-0 "
         placement="left"
         isOpen={isOpen}
         onClose={onClose}
@@ -81,16 +83,21 @@ export default function DrawerComponent({ session }: { session: Session }) {
         <DrawerContent>
           {(onClose) => (
             <>
+            <DrawerHeader className='justify-between pr-10'>
+              <strong>Workspace</strong>
+                              <ThemeSwitch/>
+              
+            </DrawerHeader>
               <DrawerBody>
                 <Accordion selectionMode="multiple">
                   <AccordionItem
                     aria-label="Accordion 1"
                     title="Editors"
-                    className=" birder-4 border-t-0 border-l-0 border-r-0 border-b-2 border-black"
+                    className=" birder-4 border-t-0 border-l-0 border-r-0 border-b-2 border-black dark:border-white"
                     classNames={{
                       title: ["text-[26px] font-semibold "],
                     }}
-                    indicator={<FaCaretLeft fill="black" />}
+                    indicator={<FaCaretLeft fill="currentColor" />}
                   >
                     <div className="flex items-center justify-between px-5">
                       <div></div>
@@ -145,7 +152,7 @@ export default function DrawerComponent({ session }: { session: Session }) {
                     classNames={{
                       title: ["text-[26px] font-semibold "],
                     }}
-                    indicator={<FaCaretLeft fill="black" />}
+                    indicator={<FaCaretLeft fill="currentColor" />}
                   >
                     <div className="flex items-center justify-end px-5">
                       <Button
