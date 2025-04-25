@@ -53,6 +53,7 @@ export default function ImportVideo({
         ownerId: data.creatorId,
         editors: [{ email: userDetails.email, id: userDetails.id }],
       },
+      CREATOR_BASE_URL:process.env.CREATOR_BASE_URL as string
     });
     if (!res.ok || !res.result) {
       addToast({ color: "danger", description: "Error uploading video" });

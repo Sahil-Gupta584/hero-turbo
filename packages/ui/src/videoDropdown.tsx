@@ -172,6 +172,7 @@ function DeleteVideoModal({
       addToast({ color: "danger", description: "Failed to delete video" });
     }
     setIsLoading(false);
+    onClose()
   }
   return (
     <>
@@ -185,7 +186,7 @@ function DeleteVideoModal({
                 Delete Video
               </ModalHeader>
               <ModalBody className="space-y-4 import-video-modal">
-                <p className="text-gray-600 ">
+                <p className="text-gray-600 darks:text-gray-300 ">
                   Are you sure you want to delete this video? This action is
                   irreversible.
                 </p>

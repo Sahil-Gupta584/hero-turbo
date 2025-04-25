@@ -5,7 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { videos, ownerId } = (await req.json()) as TUpdateThumbnailsProps;
+    const payload = await req.json();
+    console.log("payload", payload);
+    const { videos, ownerId } = payload as TUpdateThumbnailsProps;
 
     if (!videos || !ownerId) {
       throw new Error("Invalid Payload");
@@ -61,6 +63,7 @@ export async function POST(req: NextRequest) {
       ok: true,
     });
   } catch (error) {
+    console.log("error in /update-thumbnails:", error);
     return NextResponse.json({ ok: false, error });
   }
 }

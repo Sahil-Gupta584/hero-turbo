@@ -145,7 +145,8 @@ export async function getCreatorDetails({ userId }: { userId: string }) {
             videoId: v.id,
           })),
           ownerId: userId,
-        });
+        },process.env.CREATOR_BASE_URL as string);
+        
         if (updatedVideoRes.result) {
           for (const video of updatedVideoRes.result.videos) {
             const videoIndex = res.ownedVideos.findIndex(

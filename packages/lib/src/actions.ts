@@ -122,8 +122,10 @@ type VideoUploadParams = {
 
 export async function uploadVideoAction({
   videoDetails,
+  CREATOR_BASE_URL
 }: {
   videoDetails: VideoUploadParams;
+  CREATOR_BASE_URL:string
 }) {
   try {
     if (!videoDetails.videoFile) {
@@ -192,10 +194,13 @@ export async function uploadVideoAction({
         });
       }
     }
-    await updateThumbnails({
-      ownerId:videoDetails.ownerId,
-      videos: [{ gDriveId: uploadedFileData.data.id, videoId: video.id }],
-    });
+    await updateThumbnails(
+      {
+        ownerId: videoDetails.ownerId,
+        videos: [{ gDriveId, videoId: video.id }],
+      },
+      CREATOR_BASE_URL
+    );
     return backendRes({
       ok: true,
       result: video,
@@ -241,32 +246,61 @@ function bufferToStream(buffer: ArrayBuffer): Readable {
   return readable;
 }
 
-export async function updateThumbnails({
-  videos,
-  ownerId,
-}: TUpdateThumbnailsProps) {
+export async function updateThumbnails(
+  { videos, ownerId }: TUpdateThumbnailsProps,
+) {
   try {
-    console.log("runing updateThumbnails");
-
-    const res = await fetch(
-      `${process.env.CREATOR_BASE_URL}/api/update-thumbnails`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ videos, ownerId }),
-      }
-    );
-    if (!res.ok) {
-      throw new Error("Failed to update thumbnails ");
+    const { result, error } = await getGoogleServices(ownerId);
+    if (!result) {
+      throw new Error("Failed to get Google services: " + error?.message);
     }
-    const data = await res.json();
-    console.log("data", data);
+    const { drive } = result;
+    const updatedVideos: TUpdateThumbnailsProps = { videos: [], ownerId };
+    for (const { videoId, gDriveId } of videos) {
+      const file = await drive.files.get({
+        fileId: gDriveId,
+        fields: "thumbnailLink",
+      });
+
+      if (!file.data.thumbnailLink) {
+        throw new Error("Thumbnail not found");
+      }
+      const imgFile = await fetch(file.data.thumbnailLink);
+      const blob = await imgFile.blob();
+
+      const form = new FormData();
+      form.append("image", blob, videoId);
+
+      const res = await fetch(
+        "https://api.imgbb.com/1/upload?key=b10b7ca5ecd048d6a0ed9f9751cebbdc",
+        {
+          method: "POST",
+          body: form,
+        }
+      );
+      if(!res.ok){
+        console.log('res',res)
+        throw new Error("Failed to get url from imgbb")
+      }
+      const result = await res.json();
+      const updatedVideo = await prisma.video.update({
+        where: {
+          id: videoId,
+        },
+        data: {
+          thumbnailUrl: result.data.display_url,
+        },
+      });
+      updatedVideos.videos.push({
+        gDriveId: gDriveId,
+        videoId: updatedVideo.id,
+        thumbnailLink: updatedVideo.thumbnailUrl as string,
+      });
+    }
 
     return backendRes({
       ok: true,
-      result: data.result as TUpdateThumbnailsProps,
+      result: updatedVideos as TUpdateThumbnailsProps,
     });
   } catch (error) {
     console.error("Error in updateThumbnails:", error);

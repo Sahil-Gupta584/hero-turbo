@@ -35,7 +35,7 @@ export default function Home() {
         });
         return
       }
-      console.log("res.result", res.result);
+      // console.log("res.result", res.result);
       if (res.ok) {
         setUserDetails(res.result);
       }
@@ -45,28 +45,7 @@ export default function Home() {
   return (
     <>
       <div className="main">
-        <Button onPress={() => login()}>Get Started </Button>
-
         <div className="video-cards-container grid p-4 gap-[24px_11px]">
-          {true &&
-            dummyVideos.map((video) => (
-              <div className="relative" key={video.id}>
-                <Link
-                  key={video.id}
-                  href={`/videos/${video.id}`}
-                  className="block"
-                >
-                  <VideoCard video={video} />
-                </Link>
-                <VideoDropdown
-                  title={video.title as string}
-                  videoId={video.id}
-                  userRole={data?.user.role as TRole}
-                  className="[top:calc(72%_+_5px)] right-[5px] absolute"
-                  ownerId={video.ownerId}
-                />
-              </div>
-            ))}
 
           {userDetails &&
             userDetails.ownedVideos.map((video) => (
