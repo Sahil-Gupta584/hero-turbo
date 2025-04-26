@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${calFont.variable}  antialiased mx-auto min-h-screen max-w-7xl px-4 pb-24 md:px-8`}
+        className={`${calFont.variable}  antialiased mx-auto min-h-screen max-w-7xl px-4 pb-24 md:px-8 `}
       >
 
         <Providers>

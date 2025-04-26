@@ -1,8 +1,8 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@repo/db";
+import { TRole } from "@repo/lib/constants";
 import NextAuth, { NextAuthResult } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { TRole } from "./app/constants";
 
 const result = NextAuth(() => {
   return {
