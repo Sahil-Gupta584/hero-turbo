@@ -2,7 +2,7 @@
 
 import { Prisma } from "@repo/db";
 import imageInputPlaceholder from "@repo/lib/assets/imageInputPlaceholder.png";
-import Tag from "./tag.tsx";
+import Tag from "./tag";
 
 export type TUserDetailsVideo = Prisma.VideoGetPayload<{
   include: {

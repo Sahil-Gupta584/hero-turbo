@@ -122,10 +122,10 @@ type VideoUploadParams = {
 
 export async function uploadVideoAction({
   videoDetails,
-  CREATOR_BASE_URL
+  CREATOR_BASE_URL,
 }: {
   videoDetails: VideoUploadParams;
-  CREATOR_BASE_URL:string
+  CREATOR_BASE_URL: string;
 }) {
   try {
     if (!videoDetails.videoFile) {
@@ -194,13 +194,10 @@ export async function uploadVideoAction({
         });
       }
     }
-    await updateThumbnails(
-      {
-        ownerId: videoDetails.ownerId,
-        videos: [{ gDriveId, videoId: video.id }],
-      },
-      CREATOR_BASE_URL
-    );
+    await updateThumbnails({
+      ownerId: videoDetails.ownerId,
+      videos: [{ gDriveId, videoId: video.id }],
+    });
     return backendRes({
       ok: true,
       result: video,
@@ -246,9 +243,10 @@ function bufferToStream(buffer: ArrayBuffer): Readable {
   return readable;
 }
 
-export async function updateThumbnails(
-  { videos, ownerId }: TUpdateThumbnailsProps,
-) {
+export async function updateThumbnails({
+  videos,
+  ownerId,
+}: TUpdateThumbnailsProps) {
   try {
     const { result, error } = await getGoogleServices(ownerId);
     if (!result) {
@@ -278,9 +276,9 @@ export async function updateThumbnails(
           body: form,
         }
       );
-      if(!res.ok){
-        console.log('res',res)
-        throw new Error("Failed to get url from imgbb")
+      if (!res.ok) {
+        console.log("res", res);
+        throw new Error("Failed to get url from imgbb");
       }
       const result = await res.json();
       const updatedVideo = await prisma.video.update({

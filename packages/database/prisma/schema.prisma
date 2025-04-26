@@ -1,7 +1,7 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/client"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  output   = "../generated/client"
+  // binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -39,7 +39,6 @@ enum InviteStatus {
   EXPIRED
 }
 
-
 model User {
   id             String          @id @default(uuid())
   email          String          @unique
@@ -52,14 +51,13 @@ model User {
   ownedVideos    Video[]         @relation("VideoOwner")
   importedVideos Video[]         @relation("VideoImporter")
 
-  channels Channel[]
-  editors CreatorEditor[] @relation("UserCreators")
-  creators CreatorEditor[] @relation("UserEditors")
-  sentInvites     Invite[] @relation("InviteCreators")
-  receivedInvites Invite[] @relation("InviteEditors")
-  accessibleVideos VideoEditor[]  // New field: videos this user can access as an editor
+  channels         Channel[]
+  editors          CreatorEditor[] @relation("UserCreators")
+  creators         CreatorEditor[] @relation("UserEditors")
+  sentInvites      Invite[]        @relation("InviteCreators")
+  receivedInvites  Invite[]        @relation("InviteEditors")
+  accessibleVideos VideoEditor[] // New field: videos this user can access as an editor
 
-  
   account  Account[]
   sessions Session[]
 
@@ -95,7 +93,7 @@ model Video {
   owner         User          @relation("VideoOwner", fields: [ownerId], references: [id])
   importedById  String
   importedBy    User          @relation("VideoImporter", fields: [importedById], references: [id])
-  editors VideoEditor[]  // New field: list of editors for the video
+  editors       VideoEditor[] // New field: list of editors for the video
   channelId     String?
   channel       Channel?      @relation(fields: [channelId], references: [id])
   createdAt     String
@@ -113,12 +111,13 @@ model Channel {
   video         Video[] @relation(fields: [])
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model VideoEditor {
-  videoId String
+  videoId  String
   editorId String
 
-  video   Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
-  editor  User  @relation(fields: [editorId], references: [id], onDelete: Cascade)
+  video  Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  editor User  @relation(fields: [editorId], references: [id], onDelete: Cascade)
 
   assignedAt DateTime @default(now())
 
@@ -126,15 +125,15 @@ model VideoEditor {
 }
 
 model Invite {
-  id         String   @id @default(uuid()) @unique
-  creatorId  String
-  editorId   String?
+  id          String       @id @unique @default(uuid())
+  creatorId   String
+  editorId    String?
   editorEmail String
-  creator    User     @relation("InviteCreators", fields: [creatorId], references: [id], onDelete: Cascade)
-  editor     User?     @relation("InviteEditors", fields: [editorId], references: [id], onDelete: Cascade)
-  status     InviteStatus @default(PENDING)
-  createdAt  DateTime @default(now())
-  expiresAt  String
+  creator     User         @relation("InviteCreators", fields: [creatorId], references: [id], onDelete: Cascade)
+  editor      User?        @relation("InviteEditors", fields: [editorId], references: [id], onDelete: Cascade)
+  status      InviteStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  expiresAt   String
 }
 
 model Account {
