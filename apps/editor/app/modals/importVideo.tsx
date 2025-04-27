@@ -12,8 +12,8 @@ import {
   SelectItem,
   useDisclosure,
 } from "@heroui/react";
-import { updateThumbnails, uploadVideoAction } from "@repo/lib/actions";
-import ImportButton from "@repo/ui/importButton";
+import { uploadVideoAction } from "@repo/lib/actions";
+import { ImportButton } from "@repo/ui";
 import { useForm } from "react-hook-form";
 import { FaUpload } from "react-icons/fa";
 import { TUserDetails } from "../page";
@@ -53,7 +53,6 @@ export default function ImportVideo({
         ownerId: data.creatorId,
         editors: [{ email: userDetails.email, id: userDetails.id }],
       },
-      CREATOR_BASE_URL:process.env.CREATOR_BASE_URL as string
     });
     if (!res.ok || !res.result) {
       addToast({ color: "danger", description: "Error uploading video" });

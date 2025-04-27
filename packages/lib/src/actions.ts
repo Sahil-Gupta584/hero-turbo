@@ -9,7 +9,7 @@ export async function getGoogleServices(userId: string) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { channels: true },
+      include: { account: true },
     });
     if (!user) {
       throw new Error("User not found");
@@ -21,7 +21,7 @@ export async function getGoogleServices(userId: string) {
     );
 
     auth.setCredentials({
-      refresh_token: user.channels[0]?.refresh_token,
+      refresh_token: user.account[0]?.refresh_token,
     });
 
     const youtube = google.youtube({ version: "v3", auth });
@@ -122,10 +122,8 @@ type VideoUploadParams = {
 
 export async function uploadVideoAction({
   videoDetails,
-  CREATOR_BASE_URL,
 }: {
   videoDetails: VideoUploadParams;
-  CREATOR_BASE_URL: string;
 }) {
   try {
     if (!videoDetails.videoFile) {
@@ -141,7 +139,7 @@ export async function uploadVideoAction({
     const { drive } = result;
     const folderId = await getOrCreateFolder(drive, "Syncly");
 
-    const { gDriveId, video } = await prisma.$transaction(async (tx) => {
+    const { gDriveId, video } = await prisma.$transaction(async () => {
       const buffer = await videoFile.arrayBuffer();
       const stream = bufferToStream(buffer);
 

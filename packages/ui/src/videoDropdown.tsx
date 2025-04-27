@@ -1,3 +1,4 @@
+"use client";
 import {
   addToast,
   Button,
@@ -15,7 +16,7 @@ import {
 import { deleteVideo } from "@repo/lib/actions";
 import { HTMLAttributes, useState } from "react";
 
-export function VideoDropdown({
+export default function VideoDropdown({
   videoId,
   title,
   userRole,
@@ -62,7 +63,10 @@ export function VideoDropdown({
   return (
     <>
       <div className={className}>
-        <Dropdown closeOnSelect={false} classNames={{content:['dark:bg-[#4d4d4d] ']}}>
+        <Dropdown
+          closeOnSelect={false}
+          classNames={{ content: ["dark:bg-[#4d4d4d] "] }}
+        >
           <DropdownTrigger>
             <button
               className="p-1 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 rotate-90 self-end mb-2 transition"
@@ -80,7 +84,7 @@ export function VideoDropdown({
               </svg>
             </button>
           </DropdownTrigger>
-          <DropdownMenu aria-label="Static Actions" >
+          <DropdownMenu aria-label="Static Actions">
             <DropdownItem
               key="download"
               className="text-lg"
@@ -172,7 +176,7 @@ function DeleteVideoModal({
       addToast({ color: "danger", description: "Failed to delete video" });
     }
     setIsLoading(false);
-    onClose()
+    onClose();
   }
   return (
     <>

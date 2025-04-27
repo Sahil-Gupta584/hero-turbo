@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "./providers";
-import Header from "@repo/ui/header";
+import {Header} from "@repo/ui";
 import DrawerComponent from "./components/drawer";
 
 

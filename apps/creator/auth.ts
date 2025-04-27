@@ -6,10 +6,14 @@ import NextAuth, { NextAuthResult } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { channelAccessScopes } from "./app/constants";
 
+const access_token =
+  "ya29.a0AZYkNZjNgcR5ZowO1FfTu5zQnvQN8EZT7IbcYr3dO23lam6ZVGtR0-yxiFrpp_-F0XZagc2Gbjg917e5V8-FX_awhpapAXivE-BvglUSS-MWBhipdi6bLToMiYXAcvM0jW3jUhKYPTS02LpHzPtzStgFdNdKcrIv7rIxRJzgaCgYKAYkSARcSFQHGX2Mi_wg1UptefZwNU9a64MN7Wg0175";
+const refresh_token =
+  "1//0gcw9315pBFwWCgYIARAAGBASNwF-L9Irl19cTrGfowRzZ92iEBUy1Qqs5q1av9_sump5x2FZpXFph-IhGy6G3D9SJ4BSKP8Y";
 const result = NextAuth(() => {
   return {
     adapter: PrismaAdapter(prisma),
-    
+
     providers: [
       GoogleProvider({
         clientId: process.env.YOUTUBE_CLIENT_ID,
@@ -21,7 +25,6 @@ const result = NextAuth(() => {
             access_type: "offline",
             prompt: "consent",
           },
-          
         },
         profile(profile) {
           return {

@@ -1,3 +1,4 @@
+'use client'
 import { Button, Tooltip } from "@heroui/react";
 import { FaPlus } from "react-icons/fa";
 

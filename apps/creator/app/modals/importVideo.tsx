@@ -13,8 +13,8 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@heroui/react";
-import {  uploadVideoAction } from "@repo/lib/actions";
-import ImportButton from "@repo/ui/importButton";
+import { uploadVideoAction } from "@repo/lib/actions";
+import { ImportButton } from "@repo/ui";
 import { useForm } from "react-hook-form";
 import { FaUpload } from "react-icons/fa";
 import { TUserDetails } from "../page";
@@ -62,7 +62,7 @@ export default function ImportVideo({
         importerId: userDetails.id,
         ownerId: userDetails.id,
         videoFile: data.videoFile[0],
-      },CREATOR_BASE_URL:process.env.CREATOR_BASE_URL as string
+      },
     });
     if (!result.ok || !result.result) {
       addToast({ color: "danger", title: "Failed to import video!" });
@@ -70,7 +70,6 @@ export default function ImportVideo({
     }
     addToast({ color: "success", title: "Video Imported successfully!" });
     onClose();
-    
   };
 
   return (

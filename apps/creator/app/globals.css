@@ -9,8 +9,8 @@
 }
 
 .dark {
-  background: linear-gradient(to bottom right, #111827, #0f172a, #111827);
-  --foreground: #ffffff;
+  background: #1f1f1f;
+  --foreground: #dedddd;
 }
 body {
   font-family: var(--font-cal);

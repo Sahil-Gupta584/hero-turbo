@@ -4,12 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./*": "./src/*.tsx"
+    ".": "./src/index.ts"
   },
   "scripts": {
-    "lint": "eslint . --max-warnings 0",
-    "generate:component": "turbo gen react-component",
-    "check-types": "tsc --noEmit"
+    "lint": "eslint . --max-warnings 0"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

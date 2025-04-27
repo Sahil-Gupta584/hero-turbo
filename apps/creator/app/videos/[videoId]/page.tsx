@@ -12,8 +12,7 @@ import {
   Textarea,
 } from "@heroui/react";
 import { TRole } from "@repo/lib/constants";
-import VideoComponent from "@repo/ui/videoComponent";
-import { VideoDropdown } from "@repo/ui/videoDropdown";
+import { VideoComponent, VideoDropdown } from "@repo/ui";
 import { youtube_v3 } from "googleapis";
 import { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";

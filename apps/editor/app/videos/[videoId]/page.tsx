@@ -1,8 +1,7 @@
 "use client";
 
-import { TRole } from "@/app/constants";
-import VideoComponent from "@repo/ui/videoComponent";
-import { VideoDropdown } from "@repo/ui/videoDropdown";
+import { TRole } from "@repo/lib/constants";
+import { VideoComponent, VideoDropdown } from "@repo/ui";
 import { useSession } from "next-auth/react";
 import { use } from "react";
 
@@ -17,7 +16,11 @@ export default function Page({ params }: Props) {
     <>
       <div className="p-6 max-w-4xl flex flex-col mx-auto">
         <VideoComponent videoId={videoId} />
-        <VideoDropdown className="self-end mt-3" videoId={videoId} userRole={data?.user.role as TRole} />
+        <VideoDropdown
+          className="self-end mt-3"
+          videoId={videoId}
+          userRole={data?.user.role as TRole}
+        />
       </div>
     </>
   );

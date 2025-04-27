@@ -1,5 +1,4 @@
-'use client';
-import ThemeSwitch from '@repo/ui/themeSwitch';
+"use client";
 import { getGoogleAuthUrl } from "@/lib/authActions";
 import { getUserWithEditors } from "@/lib/dbActions";
 import {
@@ -7,7 +6,7 @@ import {
   DrawerBody,
   DrawerContent,
   DrawerFooter,
-  DrawerHeader
+  DrawerHeader,
 } from "@heroui/drawer";
 import {
   Accordion,
@@ -17,6 +16,7 @@ import {
   Button,
   useDisclosure,
 } from "@heroui/react";
+import { ThemeSwitch } from "@repo/ui";
 import { Session, User } from "next-auth";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -83,11 +83,10 @@ export default function DrawerComponent({ session }: { session: Session }) {
         <DrawerContent>
           {(onClose) => (
             <>
-            <DrawerHeader className='justify-between pr-10'>
-              <strong>Workspace</strong>
-                              <ThemeSwitch/>
-              
-            </DrawerHeader>
+              <DrawerHeader className="justify-between pr-10">
+                <strong>Workspace</strong>
+                <ThemeSwitch />
+              </DrawerHeader>
               <DrawerBody>
                 <Accordion selectionMode="multiple">
                   <AccordionItem
@@ -168,20 +167,20 @@ export default function DrawerComponent({ session }: { session: Session }) {
                     <div className="flex gap-4 items-center flex-wrap p-4">
                       {userDetails &&
                         userDetails.channels.map((channel) => (
-                            <Link
-                              href={`https://www.youtube.com/channel/${channel.ytChannelId}`}
-                              className="flex gap-4 items-center pl-10"
-                              key={channel.id}
-                            >
-                              <Avatar
-                                className="h-14 w-14"
-                                src={channel.logoUrl}
-                                fallback
-                              />
-                              <span className="capitalize text-[22px]">
-                                {channel?.name}
-                              </span>
-                            </Link>
+                          <Link
+                            href={`https://www.youtube.com/channel/${channel.ytChannelId}`}
+                            className="flex gap-4 items-center pl-10"
+                            key={channel.id}
+                          >
+                            <Avatar
+                              className="h-14 w-14"
+                              src={channel.logoUrl}
+                              fallback
+                            />
+                            <span className="capitalize text-[22px]">
+                              {channel?.name}
+                            </span>
+                          </Link>
                         ))}
                     </div>
                   </AccordionItem>

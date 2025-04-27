@@ -77,9 +77,10 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 
 export const PlanType: {
-  FREE: 'FREE',
+  BASE: 'BASE',
   PRO: 'PRO',
-  BUSINESS: 'BUSINESS'
+  GROWTH: 'GROWTH',
+  ENTERPRISE: 'ENTERPRISE'
 };
 
 export type PlanType = (typeof PlanType)[keyof typeof PlanType]
@@ -1958,6 +1959,7 @@ export namespace Prisma {
     emailVerified: Date | null
     role: $Enums.Role | null
     plan: $Enums.PlanType | null
+    trialEndAt: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1970,6 +1972,7 @@ export namespace Prisma {
     emailVerified: Date | null
     role: $Enums.Role | null
     plan: $Enums.PlanType | null
+    trialEndAt: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1982,6 +1985,7 @@ export namespace Prisma {
     emailVerified: number
     role: number
     plan: number
+    trialEndAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1996,6 +2000,7 @@ export namespace Prisma {
     emailVerified?: true
     role?: true
     plan?: true
+    trialEndAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2008,6 +2013,7 @@ export namespace Prisma {
     emailVerified?: true
     role?: true
     plan?: true
+    trialEndAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2020,6 +2026,7 @@ export namespace Prisma {
     emailVerified?: true
     role?: true
     plan?: true
+    trialEndAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2105,6 +2112,7 @@ export namespace Prisma {
     emailVerified: Date | null
     role: $Enums.Role
     plan: $Enums.PlanType | null
+    trialEndAt: string | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2134,6 +2142,7 @@ export namespace Prisma {
     emailVerified?: boolean
     role?: boolean
     plan?: boolean
+    trialEndAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     Authenticator?: boolean | User$AuthenticatorArgs<ExtArgs>
@@ -2158,6 +2167,7 @@ export namespace Prisma {
     emailVerified?: boolean
     role?: boolean
     plan?: boolean
+    trialEndAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2170,6 +2180,7 @@ export namespace Prisma {
     emailVerified?: boolean
     role?: boolean
     plan?: boolean
+    trialEndAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2182,11 +2193,12 @@ export namespace Prisma {
     emailVerified?: boolean
     role?: boolean
     plan?: boolean
+    trialEndAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "image" | "emailVerified" | "role" | "plan" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "image" | "emailVerified" | "role" | "plan" | "trialEndAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Authenticator?: boolean | User$AuthenticatorArgs<ExtArgs>
     ownedVideos?: boolean | User$ownedVideosArgs<ExtArgs>
@@ -2227,6 +2239,7 @@ export namespace Prisma {
       emailVerified: Date | null
       role: $Enums.Role
       plan: $Enums.PlanType | null
+      trialEndAt: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2670,6 +2683,7 @@ export namespace Prisma {
     readonly emailVerified: FieldRef<"User", 'DateTime'>
     readonly role: FieldRef<"User", 'Role'>
     readonly plan: FieldRef<"User", 'PlanType'>
+    readonly trialEndAt: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -13319,6 +13333,7 @@ export namespace Prisma {
     emailVerified: 'emailVerified',
     role: 'role',
     plan: 'plan',
+    trialEndAt: 'trialEndAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -13621,6 +13636,7 @@ export namespace Prisma {
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
     plan?: EnumPlanTypeNullableFilter<"User"> | $Enums.PlanType | null
+    trialEndAt?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     Authenticator?: AuthenticatorListRelationFilter
@@ -13644,6 +13660,7 @@ export namespace Prisma {
     emailVerified?: SortOrderInput | SortOrder
     role?: SortOrder
     plan?: SortOrderInput | SortOrder
+    trialEndAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     Authenticator?: AuthenticatorOrderByRelationAggregateInput
@@ -13670,6 +13687,7 @@ export namespace Prisma {
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
     plan?: EnumPlanTypeNullableFilter<"User"> | $Enums.PlanType | null
+    trialEndAt?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     Authenticator?: AuthenticatorListRelationFilter
@@ -13693,6 +13711,7 @@ export namespace Prisma {
     emailVerified?: SortOrderInput | SortOrder
     role?: SortOrder
     plan?: SortOrderInput | SortOrder
+    trialEndAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -13711,6 +13730,7 @@ export namespace Prisma {
     emailVerified?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     plan?: EnumPlanTypeNullableWithAggregatesFilter<"User"> | $Enums.PlanType | null
+    trialEndAt?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -14347,6 +14367,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -14370,6 +14391,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -14393,6 +14415,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -14416,6 +14439,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -14439,6 +14463,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -14451,6 +14476,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -14463,6 +14489,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15146,6 +15173,21 @@ export namespace Prisma {
     not?: NestedEnumPlanTypeNullableFilter<$PrismaModel> | $Enums.PlanType | null
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -15250,6 +15292,7 @@ export namespace Prisma {
     emailVerified?: SortOrder
     role?: SortOrder
     plan?: SortOrder
+    trialEndAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -15262,6 +15305,7 @@ export namespace Prisma {
     emailVerified?: SortOrder
     role?: SortOrder
     plan?: SortOrder
+    trialEndAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -15274,6 +15318,7 @@ export namespace Prisma {
     emailVerified?: SortOrder
     role?: SortOrder
     plan?: SortOrder
+    trialEndAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -15330,6 +15375,24 @@ export namespace Prisma {
     _max?: NestedEnumPlanTypeNullableFilter<$PrismaModel>
   }
 
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -15370,21 +15433,6 @@ export namespace Prisma {
     creatorId?: SortOrder
     editorId?: SortOrder
     assignedAt?: SortOrder
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -15483,24 +15531,6 @@ export namespace Prisma {
 
   export type VideoSumOrderByAggregateInput = {
     scheduledAt?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -16016,6 +16046,10 @@ export namespace Prisma {
     set?: $Enums.PlanType | null
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -16392,10 +16426,6 @@ export namespace Prisma {
     connect?: VideoEditorWhereUniqueInput | VideoEditorWhereUniqueInput[]
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
@@ -16682,6 +16712,20 @@ export namespace Prisma {
     not?: NestedEnumPlanTypeNullableFilter<$PrismaModel> | $Enums.PlanType | null
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -16766,48 +16810,6 @@ export namespace Prisma {
     _max?: NestedEnumPlanTypeNullableFilter<$PrismaModel>
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedEnumVideoStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.VideoStatus | EnumVideoStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.VideoStatus[] | ListEnumVideoStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.VideoStatus[] | ListEnumVideoStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumVideoStatusFilter<$PrismaModel> | $Enums.VideoStatus
-  }
-
-  export type NestedEnumPrivacyStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.PrivacyStatus | EnumPrivacyStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.PrivacyStatus[] | ListEnumPrivacyStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.PrivacyStatus[] | ListEnumPrivacyStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumPrivacyStatusFilter<$PrismaModel> | $Enums.PrivacyStatus
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -16823,6 +16825,34 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumVideoStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.VideoStatus | EnumVideoStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VideoStatus[] | ListEnumVideoStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VideoStatus[] | ListEnumVideoStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVideoStatusFilter<$PrismaModel> | $Enums.VideoStatus
+  }
+
+  export type NestedEnumPrivacyStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.PrivacyStatus | EnumPrivacyStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PrivacyStatus[] | ListEnumPrivacyStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PrivacyStatus[] | ListEnumPrivacyStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPrivacyStatusFilter<$PrismaModel> | $Enums.PrivacyStatus
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -17557,6 +17587,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -17579,6 +17610,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -17606,6 +17638,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -17628,6 +17661,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -17666,6 +17700,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -17688,6 +17723,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -17721,6 +17757,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -17743,6 +17780,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -17765,6 +17803,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -17787,6 +17826,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -17814,6 +17854,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -17836,6 +17877,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -17921,6 +17963,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -17943,6 +17986,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -17976,6 +18020,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -17998,6 +18043,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -18115,6 +18161,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -18137,6 +18184,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -18191,6 +18239,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -18213,6 +18262,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -18276,6 +18326,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -18298,6 +18349,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -18383,6 +18435,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -18405,6 +18458,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -18427,6 +18481,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -18449,6 +18504,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -18476,6 +18532,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -18498,6 +18555,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -18536,6 +18594,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -18558,6 +18617,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -18591,6 +18651,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -18613,6 +18674,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -18635,6 +18697,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -18657,6 +18720,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -18695,6 +18759,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -18717,6 +18782,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -18739,6 +18805,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -18761,6 +18828,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -18799,6 +18867,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -18821,6 +18890,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -18843,6 +18913,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     ownedVideos?: VideoCreateNestedManyWithoutOwnerInput
@@ -18865,6 +18936,7 @@ export namespace Prisma {
     emailVerified?: Date | string | null
     role: $Enums.Role
     plan?: $Enums.PlanType | null
+    trialEndAt?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     ownedVideos?: VideoUncheckedCreateNestedManyWithoutOwnerInput
@@ -18903,6 +18975,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownedVideos?: VideoUpdateManyWithoutOwnerNestedInput
@@ -18925,6 +18998,7 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     plan?: NullableEnumPlanTypeFieldUpdateOperationsInput | $Enums.PlanType | null
+    trialEndAt?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownedVideos?: VideoUncheckedUpdateManyWithoutOwnerNestedInput

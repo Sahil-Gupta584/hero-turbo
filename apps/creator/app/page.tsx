@@ -1,19 +1,16 @@
 "use client";
-import { login } from "@/lib/authActions";
 import { getCreatorDetails } from "@/lib/dbActions";
-import { addToast, Button, Skeleton } from "@heroui/react";
+import { addToast, Skeleton } from "@heroui/react";
 import { TRole } from "@repo/lib/constants";
-import VideoCard from "@repo/ui/videoCard";
-import { VideoDropdown } from "@repo/ui/videoDropdown";
+import { VideoCard, VideoDropdown } from "@repo/ui";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { dummyVideos } from "./constants";
 import ImportVideo from "./modals/importVideo";
 
-export type TUserDetails = NonNullable<Awaited<
-  ReturnType<typeof getCreatorDetails>
->>["result"];
+export type TUserDetails = NonNullable<
+  Awaited<ReturnType<typeof getCreatorDetails>>
+>["result"];
 
 export default function Home() {
   const [userDetails, setUserDetails] = useState<TUserDetails>(null);
@@ -33,7 +30,7 @@ export default function Home() {
           color: "danger",
           description: "Failed to fetch videos.",
         });
-        return
+        return;
       }
       // console.log("res.result", res.result);
       if (res.ok) {
@@ -46,7 +43,6 @@ export default function Home() {
     <>
       <div className="main">
         <div className="video-cards-container grid p-4 gap-[24px_11px]">
-
           {userDetails &&
             userDetails.ownedVideos.map((video) => (
               <div className="relative" key={video.id}>

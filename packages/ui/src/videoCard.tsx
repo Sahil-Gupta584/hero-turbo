@@ -2,7 +2,7 @@
 
 import { Prisma } from "@repo/db";
 import imageInputPlaceholder from "@repo/lib/assets/imageInputPlaceholder.png";
-import Tag from "./tag";
+import Tag from "./tag.tsx";
 
 export type TUserDetailsVideo = Prisma.VideoGetPayload<{
   include: {
@@ -24,7 +24,9 @@ export default function VideoCard({ video }: { video: TUserDetailsVideo }) {
       <div className="flex items-center gap-2 p-2 border-t-2 border-t-gray-200 dark:border-t-neutral-700">
         <img
           className="w-12 h-12 rounded-full self-start object-cover"
-          src={video.channel ? video.channel.logoUrl : imageInputPlaceholder.src}
+          src={
+            video.channel ? video.channel.logoUrl : imageInputPlaceholder.src
+          }
         />
         <div className="flex flex-col grow">
           <span className="font-semibold text-sm line-clamp-2 text-black dark:text-white">

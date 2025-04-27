@@ -1,7 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/client"
-  // binaryTargets = ["native", "debian-openssl-3.0.x"]
+  provider     = "prisma-client-js"
+  output       = "../generated/client"
+  moduleFormat = "esm"
 }
 
 datasource db {
@@ -15,9 +15,10 @@ enum Role {
 }
 
 enum PlanType {
-  FREE
+  BASE
   PRO
-  BUSINESS
+  GROWTH
+  ENTERPRISE
 }
 
 enum VideoStatus {
@@ -61,6 +62,7 @@ model User {
   account  Account[]
   sessions Session[]
 
+  trialEndAt String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -1,3 +1,4 @@
+"use client";
 import { addToast, Skeleton } from "@heroui/react";
 import { getVideoLink } from "@repo/lib/actions";
 import { useEffect, useState } from "react";

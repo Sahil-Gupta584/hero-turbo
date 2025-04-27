@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { getEditorCreators } from "@/lib/dbActions";
 import {
   Drawer,
@@ -8,9 +8,9 @@ import {
   DrawerHeader,
 } from "@heroui/drawer";
 import { addToast, Avatar, Button, useDisclosure } from "@heroui/react";
+import { ThemeSwitch } from "@repo/ui";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
-import ThemeSwitch from '@repo/ui/themeSwitch';
 type TCreators = NonNullable<
   Awaited<ReturnType<typeof getEditorCreators>>["result"]
 >["creators"];
@@ -60,24 +60,19 @@ export default function DrawerComponent({ session }: { session: Session }) {
             <>
               <DrawerHeader className="flex items-center justify-between text-2xl pr-10">
                 Joined Creators
-                <ThemeSwitch/>
+                <ThemeSwitch />
               </DrawerHeader>
               <DrawerBody>
-                  {creators && creators.length === 0 && (
-                    <p className="text-sm text-gray-500 text-center">
-                      No Creators joined yet
-                    </p>
-                  )}
+                {creators && creators.length === 0 && (
+                  <p className="text-sm text-gray-500 text-center">
+                    No Creators joined yet
+                  </p>
+                )}
                 <div className="flex gap-4 items-center flex-wrap p-4">
                   {creators &&
                     creators.map(({ creator }, i) => (
-                      <div
-                      key={creator.id}
-
-                      >
-                        <div
-                          className="flex justify-between items-center w-full "
-                        >
+                      <div key={creator.id}>
+                        <div className="flex justify-between items-center w-full ">
                           <div
                             className="flex gap-4 items-center pl-10"
                             key={creator.id}

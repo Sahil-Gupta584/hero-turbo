@@ -1,7 +1,7 @@
 "use server";
 
 import { TVideoDetails } from "@/app/videos/[videoId]/page";
-import { prisma } from "@repo/db";
+import { PlanType, prisma } from "@repo/db";
 import { getGoogleServices, updateThumbnails } from "@repo/lib/actions";
 import { backendRes } from "@repo/lib/utils";
 import { google } from "googleapis";
@@ -366,4 +366,28 @@ async function updateGoogleDrivePermissions({
         drive.permissions.delete({ fileId: gDriveId, permissionId: p.id! });
       })
   );
+}
+
+export async function updatePlan({
+  planType,
+  userId,
+}: {
+  userId: string;
+  planType: PlanType;
+}) {
+  try {
+    const isExists = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!isExists) throw new Error("User not found");
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { plan: planType },
+    });
+    return backendRes({ ok: true, result: updatedUser });
+  } catch (error) {
+    console.log("error from updatePlan", error);
+    return backendRes({ ok: false, error: error as Error, result: null });
+  }
 }

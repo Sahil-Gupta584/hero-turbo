@@ -1,12 +1,13 @@
 import { Button, Card, CardBody } from "@heroui/react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { FaCheck } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 
 export default function Pricing() {
   const plans = [
     {
-      name: "Base",
+      name: "BASE",
       price: "$9",
       period: "/month",
       description: "Perfect for individual creators getting started.",
@@ -21,7 +22,7 @@ export default function Pricing() {
       popular: false,
     },
     {
-      name: "Pro",
+      name: "PRO",
       price: "$14",
       period: "/month",
       description: "Ideal for creators managing multiple channels.",
@@ -36,7 +37,7 @@ export default function Pricing() {
       popular: true,
     },
     {
-      name: "Growth",
+      name: "GROWTH",
       price: "$49",
       period: "/month",
       description: "For small production teams scaling up.",
@@ -51,7 +52,7 @@ export default function Pricing() {
       popular: false,
     },
     {
-      name: "Enterprise",
+      name: "ENTERPRISE",
       price: "Custom",
       period: "",
       description: "For large teams needing unlimited flexibility.",
@@ -115,6 +116,10 @@ export default function Pricing() {
                       {plan.period}
                     </span>
                   </div>
+                  <span className="w-fit inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full mt-3">
+  14-day free trial
+</span>
+
                   <p className="mt-2 text-gray-600">{plan.description}</p>
 
                   <ul className="mt-6 space-y-4 flex-grow">
@@ -136,7 +141,9 @@ export default function Pricing() {
                     ))}
                   </ul>
 
-                  <a href="#contact">
+                  <Link
+                    href={`${process.env.CREATOR_BASE_URL}/auth?planType=${plan.name}`}
+                  >
                     <Button
                       className={`mt-8 w-full ${
                         plan.popular
@@ -147,7 +154,7 @@ export default function Pricing() {
                     >
                       {plan.cta}
                     </Button>
-                  </a>
+                  </Link>
                 </CardBody>
               </Card>
             </motion.div>

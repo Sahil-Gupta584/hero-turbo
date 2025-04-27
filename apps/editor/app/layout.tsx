@@ -1,10 +1,9 @@
-import Header from "@repo/ui/header";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import DrawerComponent from "./components/drawer";
 import "./globals.css";
 import Providers from "./providers";
-
+import {Header} from "@repo/ui";
 
 export const metadata: Metadata = {
   title: "Create Next App",

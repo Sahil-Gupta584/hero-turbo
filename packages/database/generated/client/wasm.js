@@ -125,6 +125,7 @@ exports.Prisma.UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   role: 'role',
   plan: 'plan',
+  trialEndAt: 'trialEndAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -241,9 +242,10 @@ exports.Role = exports.$Enums.Role = {
 };
 
 exports.PlanType = exports.$Enums.PlanType = {
-  FREE: 'FREE',
+  BASE: 'BASE',
   PRO: 'PRO',
-  BUSINESS: 'BUSINESS'
+  GROWTH: 'GROWTH',
+  ENTERPRISE: 'ENTERPRISE'
 };
 
 exports.VideoStatus = exports.$Enums.VideoStatus = {
