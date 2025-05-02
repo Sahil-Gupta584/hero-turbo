@@ -5,6 +5,8 @@ import { dirname } from "path";
 const __dirname = dirname(require.resolve("./"));
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
+export { default as AuthPage } from "./authPage.tsx";
+export { default as DrawerProfileHeader } from "./drawerProfileHeader.tsx";
 export { default as Header } from "./header.tsx";
 export { default as ImportButton } from "./importButton.tsx";
 export { default as Tag } from "./tag.tsx";

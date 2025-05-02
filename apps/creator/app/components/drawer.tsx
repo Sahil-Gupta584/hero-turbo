@@ -1,11 +1,10 @@
 "use client";
-import { getGoogleAuthUrl } from "@/lib/authActions";
+import { getGoogleAuthUrl, logOut } from "@/lib/authActions";
 import { getUserWithEditors } from "@/lib/dbActions";
 import {
   Drawer,
   DrawerBody,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
 } from "@heroui/drawer";
 import {
@@ -16,7 +15,7 @@ import {
   Button,
   useDisclosure,
 } from "@heroui/react";
-import { ThemeSwitch } from "@repo/ui";
+import { DrawerProfileHeader } from "@repo/ui";
 import { Session, User } from "next-auth";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -62,20 +61,20 @@ export default function DrawerComponent({ session }: { session: Session }) {
     <>
       <Button
         onPress={onOpen}
-        className="flex items-center justify-end sm:justify-center px-0 sm:px-2 gap-2 bg-transparent hover:bg-gray-300 transition  py-1 rounded-md min-w-fit"
+        className="flex items-center justify-end sm:justify-center px-0 sm:px-2 gap-2 bg-transparent hover:bg-gray-300 transition py-1 rounded-md min-w-fit"
       >
         <Avatar
-          className="md:h-7 md:w-7 "
+          className="md:h-7 md:w-7"
           src={session?.user.image as string}
           fallback
         />
-        <span className="capitalize hidden sm:inline text-sm  mt-1">
+        <span className="capitalize hidden sm:inline text-sm mt-1">
           {session?.user.name}
         </span>
       </Button>
 
       <Drawer
-        className=" h-screen max-w-5xl left-0 "
+        className="h-screen max-w-5xl left-0"
         placement="left"
         isOpen={isOpen}
         onClose={onClose}
@@ -85,16 +84,21 @@ export default function DrawerComponent({ session }: { session: Session }) {
             <>
               <DrawerHeader className="justify-between pr-10">
                 <strong>Workspace</strong>
-                <ThemeSwitch />
+                {/* Removing ThemeSwitch from here */}
               </DrawerHeader>
               <DrawerBody>
+                <DrawerProfileHeader
+                  session={session}
+                  handleLogout={() => logOut()}
+                />
+
                 <Accordion selectionMode="multiple">
                   <AccordionItem
                     aria-label="Accordion 1"
                     title="Editors"
-                    className=" birder-4 border-t-0 border-l-0 border-r-0 border-b-2 border-black dark:border-white"
+                    className="birder-4 border-t-0 border-l-0 border-r-0 border-b-2 border-black dark:border-white"
                     classNames={{
-                      title: ["text-[26px] font-semibold "],
+                      title: ["text-[26px] font-semibold"],
                     }}
                     indicator={<FaCaretLeft fill="currentColor" />}
                   >
@@ -147,19 +151,19 @@ export default function DrawerComponent({ session }: { session: Session }) {
                     key="channels"
                     aria-label="Accordion 2"
                     title="Channels"
-                    className=" birder-4 border-t-0 border-l-0 border-r-0 border-b-2 border-black"
+                    className="birder-4 border-t-0 border-l-0 border-r-0 border-b-2 border-black dark:border-white"
                     classNames={{
-                      title: ["text-[26px] font-semibold "],
+                      title: ["text-[26px] font-semibold"],
                     }}
                     indicator={<FaCaretLeft fill="currentColor" />}
                   >
                     <div className="flex items-center justify-end px-5">
                       <Button
-                        className="bg-black text-white self-end"
+                        className=" self-end"
                         endContent={<MdAdd />}
                         size="sm"
+                        color="primary"
                         onPress={handleAddChannel}
-                        key="rvh"
                       >
                         Add Channel
                       </Button>
@@ -186,14 +190,6 @@ export default function DrawerComponent({ session }: { session: Session }) {
                   </AccordionItem>
                 </Accordion>
               </DrawerBody>
-              <DrawerFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
-                </Button>
-              </DrawerFooter>
             </>
           )}
         </DrawerContent>

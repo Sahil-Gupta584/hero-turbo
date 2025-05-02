@@ -15,9 +15,9 @@ export async function getGoogleServices(userId: string) {
       throw new Error("User not found");
     }
     const auth = new google.auth.OAuth2(
-      process.env.YOUTUBE_CLIENT_ID,
-      process.env.YOUTUBE_CLIENT_SECRET,
-      process.env.YOUTUBE_REDIRECT_URI
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.GOOGLE_REDIRECT_URI
     );
 
     auth.setCredentials({

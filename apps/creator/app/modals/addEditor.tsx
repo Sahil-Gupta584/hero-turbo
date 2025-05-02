@@ -45,7 +45,8 @@ export function AddEditor({ creator }: { creator: User }) {
   return (
     <>
       <Button
-        className="bg-black text-white self-end px-4"
+        className=" self-end px-4"
+        color="primary"
         endContent={<MdAdd />}
         size="sm"
         onPress={onOpen}

@@ -10,14 +10,7 @@ declare module "next-auth" {
       id: string;
       role: TRole;
       plan: TPlan;
+      createdAt: Date;
     };
-    refresh_token: string;
   }
-  // interface User {
-  //   id: string;
-  //   email: string;
-  //   name: string | null;
-  //   image: string | null;
-  //   role: TRole; // Add role field
-  // }
 }

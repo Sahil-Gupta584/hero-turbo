@@ -1,84 +1,30 @@
 "use client";
-import { getCreatorDetails } from "@/lib/dbActions";
-import { addToast, Skeleton } from "@heroui/react";
-import { TRole } from "@repo/lib/constants";
-import { VideoCard, VideoDropdown } from "@repo/ui";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import ImportVideo from "./modals/importVideo";
-
-export type TUserDetails = NonNullable<
-  Awaited<ReturnType<typeof getCreatorDetails>>
->["result"];
+import { useEffect } from "react";
+import Features from "./components/features";
+import Footer from "./components/footer";
+import Header from "./components/header";
+import Hero from "./components/hero";
+import Pricing from "./components/pricing";
+import WhyUs from "./components/whyUs";
 
 export default function Home() {
-  const [userDetails, setUserDetails] = useState<TUserDetails>(null);
-  const { data, status } = useSession();
-
   useEffect(() => {
-    (async () => {
-      if (status === "loading") return;
-      if (!data?.user.id) {
-        addToast({ color: "danger", description: "Unauthenticated" });
-        return;
+    if (window.location.hash) {
+      const id = window.location.hash.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
       }
-      const res = await getCreatorDetails({ userId: data.user.id });
-
-      if (res && !res.ok) {
-        addToast({
-          color: "danger",
-          description: "Failed to fetch videos.",
-        });
-        return;
-      }
-      // console.log("res.result", res.result);
-      if (res.ok) {
-        setUserDetails(res.result);
-      }
-    })();
-  }, [data?.user.id, status]); // Added dependency
-
+    }
+  }, []);
   return (
     <>
-      <div className="main">
-        <div className="video-cards-container grid p-4 gap-[24px_11px]">
-          {userDetails &&
-            userDetails.ownedVideos.map((video) => (
-              <div className="relative" key={video.id}>
-                <Link
-                  key={video.id}
-                  href={`/videos/${video.id}`}
-                  className="block"
-                >
-                  <VideoCard video={video} />
-                </Link>
-                <VideoDropdown
-                  title={video.title as string}
-                  videoId={video.id}
-                  userRole={data?.user.role as TRole}
-                  className="[top:calc(72%_+_5px)] right-[5px] absolute"
-                  ownerId={video.ownerId}
-                />
-              </div>
-            ))}
-
-          {!userDetails && (
-            <>
-              <Skeleton className="w-[387px] h-[310px] rounded-lg" />
-              <Skeleton className="w-[387px] h-[310px] rounded-lg" />
-              <Skeleton className="w-[387px] h-[310px] rounded-lg" />
-              <Skeleton className="w-[387px] h-[310px] rounded-lg" />
-              <Skeleton className="w-[387px] h-[310px] rounded-lg" />
-              <Skeleton className="w-[387px] h-[310px] rounded-lg" />
-              <Skeleton className="w-[387px] h-[310px] rounded-lg" />
-              <Skeleton className="w-[387px] h-[310px] rounded-lg" />
-              <Skeleton className="w-[387px] h-[310px] rounded-lg" />
-            </>
-          )}
-        </div>
-        {data?.user.id && <ImportVideo userDetails={userDetails} />}
-      </div>
+      <Header />
+      <Hero />
+      <WhyUs />
+      <Features />
+      <Pricing />
+      <Footer />
     </>
   );
 }

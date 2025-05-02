@@ -1,4 +1,5 @@
 "use client";
+import { logOut } from "@/lib/authActions";
 import { getEditorCreators } from "@/lib/dbActions";
 import {
   Drawer,
@@ -8,7 +9,7 @@ import {
   DrawerHeader,
 } from "@heroui/drawer";
 import { addToast, Avatar, Button, useDisclosure } from "@heroui/react";
-import { ThemeSwitch } from "@repo/ui";
+import { DrawerProfileHeader, ThemeSwitch } from "@repo/ui";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
 type TCreators = NonNullable<
@@ -60,8 +61,12 @@ export default function DrawerComponent({ session }: { session: Session }) {
             <>
               <DrawerHeader className="flex items-center justify-between text-2xl pr-10">
                 Joined Creators
-                <ThemeSwitch />
               </DrawerHeader>
+              <ThemeSwitch />
+              <DrawerProfileHeader
+                session={session}
+                handleLogout={() => logOut()}
+              />
               <DrawerBody>
                 {creators && creators.length === 0 && (
                   <p className="text-sm text-gray-500 text-center">

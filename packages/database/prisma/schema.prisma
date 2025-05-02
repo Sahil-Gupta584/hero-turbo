@@ -1,5 +1,5 @@
 generator client {
-  provider     = "prisma-client-js"
+  provider     = "prisma-client"
   output       = "../generated/client"
   moduleFormat = "esm"
 }
@@ -15,6 +15,7 @@ enum Role {
 }
 
 enum PlanType {
+  TRIAL
   BASE
   PRO
   GROWTH

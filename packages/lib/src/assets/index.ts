@@ -1,4 +1,4 @@
 export const imageInputPlaceholder = new URL(
-  "./image-input-placeholder.png",
+  "./imageInputPlaceholder.png",
   import.meta.url
 ).href;

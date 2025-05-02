@@ -1,7 +1,7 @@
 "use client";
 
 import { Prisma } from "@repo/db";
-import imageInputPlaceholder from "@repo/lib/assets/imageInputPlaceholder.png";
+import { imageInputPlaceholder } from "@repo/lib/assets/index.ts";
 import Tag from "./tag.tsx";
 
 export type TUserDetailsVideo = Prisma.VideoGetPayload<{

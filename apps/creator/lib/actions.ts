@@ -2,10 +2,10 @@
 
 import { prisma } from "@repo/db";
 import { getGoogleServices } from "@repo/lib/actions";
+import { backendRes } from "@repo/lib/utils";
 import moment from "moment";
 import { User } from "next-auth";
 import nodemailer from "nodemailer";
-import { backendRes } from "@repo/lib/utils";
 
 export async function getVideoDetails(videoId: string) {
   try {
@@ -193,7 +193,7 @@ export async function sendInviteLink({
             <!-- Accept Invite Button -->
             <tr>
               <td align="center" style="padding-bottom: 16px;">
-                <a href='${process.env.EDITOR_BASE_URL!}/invite/${createInvite.id}' style="background-color: #4f46e5; color: white; text-decoration: none; padding: 14px 28px; font-size: 16px; border-radius: 8px; font-weight: bold; display: inline-block;">
+                <a href='${process.env.EDITOR_BASE_URL}/invite/${createInvite.id}' style="background-color: #4f46e5; color: white; text-decoration: none; padding: 14px 28px; font-size: 16px; border-radius: 8px; font-weight: bold; display: inline-block;">
                   Accept Invite
                 </a>
                 <p><strong>Note: </strong>This invite will get expired in 7 days.</p>
